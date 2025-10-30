@@ -24,17 +24,6 @@ El frontend proporciona la interfaz de usuario, permitiendo que los usuarios añ
 - Git  
 - (Opcional) Firebase CLI para autenticación y almacenamiento
 
-## Estructura del proyecto (puede variar)
-
-socialfood-frontend/
-│
-├── src/
-│   ├── components/      # Componentes reutilizables (Navbar, Footer, Card, etc.)
-│   ├── pages/           # Vistas principales (Inicio, Recetas, Perfil)
-│   ├── assets/          # Imágenes, iconos y estilos
-│   ├── App.js           # Punto de entrada principal de React
-│   └── index.js         # Renderizado raíz de la aplicación
-│
 ├── public/
 │   └── index.html       # Archivo HTML principal
 │
