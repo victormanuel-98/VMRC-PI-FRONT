@@ -1,0 +1,26 @@
+@startuml
+start
+:Usuario abre la pantalla de login;
+:Usuario introduce email y contraseña;
+
+
+if (Campos válidos?) then (Sí)
+    :Enviar credenciales al servidor;
+    :Servidor verifica usuario y contraseña;
+
+
+    if (Credenciales correctas?) then (Sí)
+        :Iniciar sesión;
+        :Redirigir al panel principal;
+    else (No)
+        :Mostrar error "Credenciales incorrectas";
+    endif
+
+
+else (No)
+    :Mostrar error de validación;
+endif
+
+
+stop
+@enduml

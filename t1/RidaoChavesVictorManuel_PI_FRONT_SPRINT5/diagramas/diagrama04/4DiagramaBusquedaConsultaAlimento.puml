@@ -1,0 +1,16 @@
+@startuml
+start
+:Usuario introduce nombre del alimento;
+:Enviar consulta a la API de alimentos;
+
+
+if (La API responde?) then (Sí)
+    :Recibir información nutricional;
+    :Mostrar calorías y macros;
+else (No)
+    :Mostrar error "Alimento no encontrado o API caída";
+endif
+
+
+stop
+@enduml

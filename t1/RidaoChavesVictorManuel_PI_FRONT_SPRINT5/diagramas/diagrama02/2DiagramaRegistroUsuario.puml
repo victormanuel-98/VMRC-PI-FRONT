@@ -1,0 +1,25 @@
+@startuml
+start
+:Usuario abre formulario de registro;
+:Usuario introduce nombre, email y contraseña;
+
+
+if (Datos válidos?) then (Sí)
+    :Enviar datos al servidor;
+    :Servidor valida email único;
+   
+    if (Email disponible?) then (Sí)
+        :Crear cuenta en la base de datos;
+        :Mostrar mensaje de registro exitoso;
+    else (No)
+        :Mostrar error "Email ya existe";
+    endif
+
+
+else (No)
+    :Mostrar errores de validación;
+endif
+
+
+stop
+@enduml

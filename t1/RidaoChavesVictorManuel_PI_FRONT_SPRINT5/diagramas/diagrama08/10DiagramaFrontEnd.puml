@@ -1,0 +1,37 @@
+@startuml
+title Arquitectura de Componentes - FrontEnd
+
+
+package "FrontEnd Web (React / SPA)" {
+
+
+    [App] --> [Router]
+
+
+    component "Pantalla de Registro" as Registro
+    component "Pantalla de Login" as Login
+    component "Panel Principal" as Dashboard
+    component "Gestor de Alimentos" as FoodManager
+    component "Gestor de Recetas" as RecipeManager
+    component "Página Social" as SocialPage
+    component "Servicio API Client" as APIClient
+
+
+    [Router] --> Registro
+    [Router] --> Login
+    [Router] --> Dashboard
+    [Router] --> FoodManager
+    [Router] --> RecipeManager
+    [Router] --> SocialPage
+
+
+    Registro --> APIClient
+    Login --> APIClient
+    Dashboard --> APIClient
+    FoodManager --> APIClient
+    RecipeManager --> APIClient
+    SocialPage --> APIClient
+}
+
+
+@enduml

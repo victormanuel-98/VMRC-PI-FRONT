@@ -1,0 +1,27 @@
+@startuml
+start
+:Usuario abre creador de recetas;
+:Usuario introduce nombre y descripción;
+:Usuario añade alimentos uno por uno;
+
+
+repeat
+  :Seleccionar alimento;
+  :Indicar cantidad;
+  :Calcular calorías parciales;
+repeat while (¿Añadir otro alimento?) is (Sí)
+
+
+:Calcular calorías totales de la receta;
+
+
+if (Usuario confirma?) then (Sí)
+    :Guardar receta en la base de datos;
+    :Mostrar receta guardada;
+else (No)
+    :Cancelar creación de la receta;
+endif
+
+
+stop
+@enduml

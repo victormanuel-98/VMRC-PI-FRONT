@@ -1,0 +1,26 @@
+@startuml
+title Componentes Globales - FrontEnd & BackEnd
+
+
+package "FrontEnd (SPA)" {
+    component "Pantallas y Módulos" as FE_Modulos
+    component "API Client" as FE_API
+}
+
+
+package "BackEnd (API REST)" {
+    component "Controladores / Endpoints" as BE_API
+    component "Lógica de Negocio" as BE_Service
+    component "Acceso a Datos (DAO)" as BE_DAO
+    database "DB" as DB
+}
+
+
+FE_Modulos --> FE_API
+FE_API --> BE_API
+BE_API --> BE_Service
+BE_Service --> BE_DAO
+BE_DAO --> DB
+
+
+@enduml

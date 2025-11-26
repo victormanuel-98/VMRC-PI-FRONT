@@ -1,0 +1,17 @@
+@startjson
+{
+    "mealId": "string",
+    "totalCalories": "number",
+    "mealType": "string",
+    "date": "string",
+    "items": [
+    {
+        "foodId": "string",
+        "name": "string",
+        "quantity": "number",
+        "unit": "string",
+        "calories": "number"
+    }
+    ]
+}
+@endjson

@@ -1,0 +1,14 @@
+@startjson
+{
+    "userId": "string",
+    "mealType": "string",  // breakfast | lunch | dinner | snack
+    "items": [
+    {
+        "foodId": "string",
+        "quantity": "number",
+        "unit": "string"   // g, ml, unidad...
+    }
+    ],
+    "date": "string"  // ISO 8601
+}
+@endjson

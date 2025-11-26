@@ -1,0 +1,99 @@
+@startuml
+title Modelo de Datos (IE Diagram) - Calorie Tracker
+
+
+entity "Usuario" as user {
+    * user_id : UUID
+    --
+    nombre : string
+    email : string
+    password_hash : string
+    fecha_creacion : datetime
+}
+
+
+entity "Alimento" as food {
+    * food_id : UUID
+    --
+    nombre : string
+    calorias_por_100g : number
+    unidad_base : string
+}
+
+
+entity "Comida" as meal {
+    * meal_id : UUID
+    --
+    user_id : UUID
+    fecha : date
+    tipo : string  // desayuno, almuerzo, cena, snack
+    total_calorias : number
+}
+
+
+entity "ItemComida" as meal_item {
+    * meal_item_id : UUID
+    --
+    meal_id : UUID
+    food_id : UUID
+    cantidad : number
+    unidad : string
+    calorias_totales : number
+}
+
+
+entity "Receta" as recipe {
+    * recipe_id : UUID
+    --
+    author_id : UUID
+    titulo : string
+    descripcion : string
+    total_calorias : number
+    es_publica : boolean
+    fecha_creacion : datetime
+}
+
+
+entity "IngredienteReceta" as recipe_ing {
+    * ingredient_id : UUID
+    --
+    recipe_id : UUID
+    food_id : UUID
+    cantidad : number
+    unidad : string
+    calorias_totales : number
+}
+
+
+entity "LikeReceta" as recipe_like {
+    * like_id : UUID
+    --
+    recipe_id : UUID
+    user_id : UUID
+}
+
+
+' Relaciones
+user ||--o{
+    meal : "1:N"
+    meal ||--o{
+        meal_item : "1:N"
+        food ||--o{
+            meal_item : "1:N"
+
+
+            user ||--o{
+                recipe : "1:N"
+                recipe ||--o{
+                    recipe_ing : "1:N"
+                    food ||--o{
+                        recipe_ing : "1:N"
+
+
+                        user ||--o{
+                            recipe_like : "1:N"
+                            recipe ||--o{
+                                recipe_like : "1:N"
+
+
+                                @enduml

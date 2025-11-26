@@ -1,0 +1,76 @@
+@startuml
+left to right direction
+actor "Usuario" as U
+actor "API de Alimentos" as API
+actor "Administrador" as ADM
+
+
+package "Autenticación" {
+  usecase "Registrarse" as UC1
+  usecase "Iniciar Sesión" as UC2
+  usecase "Cerrar Sesión" as UC3
+}
+
+
+package "Perfil" {
+  usecase "Consultar Perfil" as UC4
+  usecase "Editar Perfil" as UC5
+}
+
+
+package "Cálculo de Calorías" {
+  usecase "Buscar Alimento" as UC6
+  usecase "Consultar Info Nutricional" as UC7
+  usecase "Añadir Alimento a Comida" as UC8
+  usecase "Ver Calorías Totales" as UC9
+  usecase "Eliminar Alimento de Comida" as UC10
+}
+
+
+package "Gestión de Recetas" {
+  usecase "Crear Receta" as UC11
+  usecase "Guardar Receta" as UC12
+  usecase "Consultar Mis Recetas" as UC13
+  usecase "Compartir Receta" as UC14
+  usecase "Marcar Favorita" as UC15
+  usecase "Ver Recetas de Otros" as UC16
+}
+
+
+package "Interacción Social" {
+  usecase "Comentar Receta" as UC17
+  usecase "Dar Me Gusta" as UC18
+  usecase "Ver Perfil de Otro Usuario" as UC19
+}
+
+
+U --> UC1
+U --> UC2
+U --> UC3
+U --> UC4
+U --> UC5
+U --> UC6
+U --> UC7
+U --> UC8
+U --> UC9
+U --> UC10
+U --> UC11
+U --> UC12
+U --> UC13
+U --> UC14
+U --> UC15
+U --> UC16
+U --> UC17
+U --> UC18
+U --> UC19
+
+
+UC6 --> API : "Solicita información"
+UC7 --> API : "Obtiene calorías/macros"
+
+
+ADM --> UC14 : "Moderar contenido"
+
+
+UC8 <|-- UC9 : include
+@enduml

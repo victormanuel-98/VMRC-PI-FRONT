@@ -1,0 +1,17 @@
+@startuml
+start
+:Usuario selecciona alimento;
+:Usuario indica cantidad (gramos/piezas);
+:Calcular calorías según la cantidad;
+
+
+if (Usuario confirma?) then (Sí)
+    :Añadir alimento a la comida actual;
+    :Actualizar calorías totales;
+else (No)
+    :Cancelar acción;
+endif
+
+
+stop
+@enduml

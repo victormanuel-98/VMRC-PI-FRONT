@@ -1,0 +1,31 @@
+@startuml
+actor Usuario
+participant "FrontEnd (Web/App)" as FE
+participant "BackEnd (API)" as BE
+database "Base de Datos" as DB
+
+
+Usuario -> FE: Introduce email y contraseña
+FE -> FE: Validación local (campos vacíos)
+
+
+FE -> BE: POST /auth/login {email, password}
+BE -> DB: Buscar usuario por email
+
+
+DB --> BE: Datos del usuario
+
+
+BE -> BE: Verificar contraseña
+
+
+alt Credenciales válidas
+    BE --> FE: 200 OK + Token JWT
+    FE --> Usuario: Acceso concedido
+else Credenciales inválidas
+    BE --> FE: 401 Unauthorized
+    FE --> Usuario: Error "Credenciales incorrectas"
+end
+
+
+@enduml
