@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fit Food - Búsqueda de Alimentos</title>
+    <link rel="stylesheet" href="styles-general.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="search-bar">
+                <input type="text" placeholder="Buscar alimento">
+            </div>
+            <div class="logo">
+                <img src="images/logo.png" alt="Fit Food Logo">
+                <h1>Fit Food</h1>
+            </div>
+            <div class="user-menu">
+                <a href="perfil.html" class="user-icon" title="Perfil">👤</a>
+                <button class="menu-icon">☰</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <a href="index.html" class="nav-btn">INICIO</a>
+        <a href="mis-recetas.html" class="nav-btn">MIS RECETAS</a>
+        <a href="platos.html" class="nav-btn">PLATOS</a>
+        <a href="contacto.html" class="nav-btn">CONTACTO</a>
+        <a href="perfil.html" class="nav-btn">MI PERFIL</a>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="search-container">
+            <h2>Búsqueda de Alimentos</h2>
+            
+            <div class="search-filters">
+                <input type="text" placeholder="Nombre del alimento" class="filter-input">
+                <select class="filter-select">
+                    <option>Categoría</option>
+                    <option>Frutas</option>
+                    <option>Verduras</option>
+                    <option>Proteínas</option>
+                    <option>Lácteos</option>
+                    <option>Granos</option>
+                </select>
+                <button class="btn-search">Buscar</button>
+            </div>
+
+            <div class="food-results">
+                <div class="food-card">
+                    <div class="food-image">
+                        <img src="images/apple.jpg" alt="Manzana">
+                    </div>
+                    <div class="food-info">
+                        <h4>Manzana</h4>
+                        <p class="calories">95 kcal por 100g</p>
+                        <p class="protein">Proteína: 0.3g</p>
+                        <a href="informacion-alimento.html" class="btn-select">Seleccionar</a>
+                    </div>
+                </div>
+
+                <div class="food-card">
+                    <div class="food-image">
+                        <img src="images/chicken.jpg" alt="Pollo">
+                    </div>
+                    <div class="food-info">
+                        <h4>Pechuga de Pollo</h4>
+                        <p class="calories">165 kcal por 100g</p>
+                        <p class="protein">Proteína: 31g</p>
+                        <a href="informacion-alimento.html" class="btn-select">Seleccionar</a>
+                    </div>
+                </div>
+
+                <div class="food-card">
+                    <div class="food-image">
+                        <img src="images/broccoli.jpg" alt="Brócoli">
+                    </div>
+                    <div class="food-info">
+                        <h4>Brócoli</h4>
+                        <p class="calories">34 kcal por 100g</p>
+                        <p class="protein">Proteína: 2.8g</p>
+                        <a href="informacion-alimento.html" class="btn-select">Seleccionar</a>
+                    </div>
+                </div>
+
+                <div class="food-card">
+                    <div class="food-image">
+                        <img src="images/rice.jpg" alt="Arroz">
+                    </div>
+                    <div class="food-info">
+                        <h4>Arroz Blanco</h4>
+                        <p class="calories">130 kcal por 100g</p>
+                        <p class="protein">Proteína: 2.7g</p>
+                        <a href="informacion-alimento.html" class="btn-select">Seleccionar</a>
+                    </div>
+                </div>
+
+                <div class="food-card">
+                    <div class="food-image">
+                        <img src="images/salmon.jpg" alt="Salmón">
+                    </div>
+                    <div class="food-info">
+                        <h4>Salmón</h4>
+                        <p class="calories">208 kcal por 100g</p>
+                        <p class="protein">Proteína: 20g</p>
+                        <a href="informacion-alimento.html" class="btn-select">Seleccionar</a>
+                    </div>
+                </div>
+
+                <div class="food-card">
+                    <div class="food-image">
+                        <img src="images/almonds.jpg" alt="Almendras">
+                    </div>
+                    <div class="food-info">
+                        <h4>Almendras</h4>
+                        <p class="calories">579 kcal por 100g</p>
+                        <p class="protein">Proteína: 21.2g</p>
+                        <a href="informacion-alimento.html" class="btn-select">Seleccionar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img src="images/logo.png" alt="Fit Food Logo">
+            </div>
+            <div class="footer-sections">
+                <div class="footer-column">
+                    <h4>FitFood</h4>
+                    <ul>
+                        <li><a href="#">Biblioteca de recetas</a></li>
+                        <li><a href="#">Configuración de cookies</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Nuestra empresa</h4>
+                    <ul>
+                        <li><a href="#">Prensa</a></li>
+                        <li><a href="#">FitFoodGroup</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Colabora con nosotros</h4>
+                    <ul>
+                        <li><a href="#">Colaboradores</a></li>
+                        <li><a href="#">Influencers</a></li>
+                        <li><a href="#">Afiliados</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; FitFood 2025</p>
+        </div>
+    </footer>
+</body>
+
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fit Food - Platos</title>
+    <link rel="stylesheet" href="styles-general.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="search-bar">
+                <input type="text" placeholder="Buscar plato">
+            </div>
+            <div class="logo">
+                <img src="images/logo.png" alt="Fit Food Logo">
+                <h1>Fit Food</h1>
+            </div>
+            <div class="user-menu">
+                <a href="perfil.html" class="user-icon" title="Perfil">👤</a>
+                <button class="menu-icon">☰</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <a href="index.html" class="nav-btn">INICIO</a>
+        <a href="mis-recetas.html" class="nav-btn">MIS RECETAS</a>
+        <a href="platos.html" class="nav-btn active">PLATOS</a>
+        <a href="contacto.html" class="nav-btn">CONTACTO</a>
+        <a href="perfil.html" class="nav-btn">MI PERFIL</a>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="platos-container">
+            <div class="platos-header">
+                <h2>Platos Disponibles</h2>
+                <p class="subtitle">Descubre una variedad de platos deliciosos y saludables</p>
+            </div>
+
+            <div class="platos-filters">
+                <input type="text" placeholder="Buscar platos..." class="filter-input">
+                <select class="filter-select">
+                    <option>Todas las categorías</option>
+                    <option>Desayuno</option>
+                    <option>Almuerzo</option>
+                    <option>Cena</option>
+                    <option>Snacks</option>
+                    <option>Postres</option>
+                </select>
+                <select class="filter-select">
+                    <option>Todas las dificultades</option>
+                    <option>Fácil</option>
+                    <option>Medio</option>
+                    <option>Difícil</option>
+                </select>
+            </div>
+
+            <div class="platos-grid">
+                <div class="plato-card">
+                    <div class="plato-image">
+                        <img src="images/recipe-1.jpg" alt="Ensalada">
+                    </div>
+                    <div class="plato-info">
+                        <h4>Ensalada de Garbanzos y Quinoa</h4>
+                        <p class="plato-author">Por: Chef María García</p>
+                        <div class="plato-stats">
+                            <span class="difficulty easy">Fácil</span>
+                            <span class="calories">320 kcal</span>
+                        </div>
+                        <div class="plato-rating">
+                            <span class="stars">⭐⭐⭐⭐⭐</span>
+                            <span class="rating-count">(234 valoraciones)</span>
+                        </div>
+                        <button class="btn-view-plato">Ver Plato</button>
+                    </div>
+                </div>
+
+                <div class="plato-card">
+                    <div class="plato-image">
+                        <img src="images/recipe-2.jpg" alt="Pollo">
+                    </div>
+                    <div class="plato-info">
+                        <h4>Dados de Pollo con Salsa Cremosa</h4>
+                        <p class="plato-author">Por: Chef Carlos López</p>
+                        <div class="plato-stats">
+                            <span class="difficulty easy">Fácil</span>
+                            <span class="calories">245 kcal</span>
+                        </div>
+                        <div class="plato-rating">
+                            <span class="stars">⭐⭐⭐⭐⭐</span>
+                            <span class="rating-count">(189 valoraciones)</span>
+                        </div>
+                        <button class="btn-view-plato">Ver Plato</button>
+                    </div>
+                </div>
+
+                <div class="plato-card">
+                    <div class="plato-image">
+                        <img src="images/recipe-3.jpg" alt="Salsa dulce">
+                    </div>
+                    <div class="plato-info">
+                        <h4>Pollo en Salsa Dulce de Ciruela</h4>
+                        <p class="plato-author">Por: Chef Elena Rodríguez</p>
+                        <div class="plato-stats">
+                            <span class="difficulty medium">Medio</span>
+                            <span class="calories">380 kcal</span>
+                        </div>
+                        <div class="plato-rating">
+                            <span class="stars">⭐⭐⭐⭐</span>
+                            <span class="rating-count">(156 valoraciones)</span>
+                        </div>
+                        <button class="btn-view-plato">Ver Plato</button>
+                    </div>
+                </div>
+
+                <div class="plato-card">
+                    <div class="plato-image">
+                        <img src="images/recipe-4.jpg" alt="Lomo">
+                    </div>
+                    <div class="plato-info">
+                        <h4>Lomo de Cerdo Adobado con Papas</h4>
+                        <p class="plato-author">Por: Chef Juan Martínez</p>
+                        <div class="plato-stats">
+                            <span class="difficulty medium">Medio</span>
+                            <span class="calories">420 kcal</span>
+                        </div>
+                        <div class="plato-rating">
+                            <span class="stars">⭐⭐⭐⭐⭐</span>
+                            <span class="rating-count">(278 valoraciones)</span>
+                        </div>
+                        <button class="btn-view-plato">Ver Plato</button>
+                    </div>
+                </div>
+
+                <div class="plato-card">
+                    <div class="plato-image">
+                        <img src="images/recipe-1.jpg" alt="Pescado">
+                    </div>
+                    <div class="plato-info">
+                        <h4>Salmón a la Mantequilla con Limón</h4>
+                        <p class="plato-author">Por: Chef Ana Silva</p>
+                        <div class="plato-stats">
+                            <span class="difficulty easy">Fácil</span>
+                            <span class="calories">280 kcal</span>
+                        </div>
+                        <div class="plato-rating">
+                            <span class="stars">⭐⭐⭐⭐⭐</span>
+                            <span class="rating-count">(312 valoraciones)</span>
+                        </div>
+                        <button class="btn-view-plato">Ver Plato</button>
+                    </div>
+                </div>
+
+                <div class="plato-card">
+                    <div class="plato-image">
+                        <img src="images/recipe-2.jpg" alt="Vegetales">
+                    </div>
+                    <div class="plato-info">
+                        <h4>Veggie Bowl Mediterranean</h4>
+                        <p class="plato-author">Por: Chef Lucia Paredes</p>
+                        <div class="plato-stats">
+                            <span class="difficulty easy">Fácil</span>
+                            <span class="calories">210 kcal</span>
+                        </div>
+                        <div class="plato-rating">
+                            <span class="stars">⭐⭐⭐⭐</span>
+                            <span class="rating-count">(128 valoraciones)</span>
+                        </div>
+                        <button class="btn-view-plato">Ver Plato</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img src="images/logo.png" alt="Fit Food Logo">
+            </div>
+            <div class="footer-sections">
+                <div class="footer-column">
+                    <h4>FitFood</h4>
+                    <ul>
+                        <li><a href="#">Biblioteca de recetas</a></li>
+                        <li><a href="#">Configuración de cookies</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Nuestra empresa</h4>
+                    <ul>
+                        <li><a href="#">Prensa</a></li>
+                        <li><a href="#">FitFoodGroup</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Colabora con nosotros</h4>
+                    <ul>
+                        <li><a href="#">Colaboradores</a></li>
+                        <li><a href="#">Influencers</a></li>
+                        <li><a href="#">Afiliados</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; FitFood 2025</p>
+        </div>
+    </footer>
+</body>
+
+</html>

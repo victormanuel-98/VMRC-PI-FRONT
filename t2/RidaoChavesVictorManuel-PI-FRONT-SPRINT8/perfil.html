@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fit Food - Perfil de Usuario</title>
+    <link rel="stylesheet" href="styles-general.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="search-bar">
+                <input type="text" placeholder="Buscar receta">
+            </div>
+            <div class="logo">
+                <img src="images/logo.png" alt="Fit Food Logo">
+                <h1>Fit Food</h1>
+            </div>
+            <div class="user-menu">
+                <a href="perfil.html" class="user-icon" title="Perfil">👤</a>
+                <button class="menu-icon">☰</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <a href="index.html" class="nav-btn">INICIO</a>
+        <a href="mis-recetas.html" class="nav-btn">MIS RECETAS</a>
+        <a href="platos.html" class="nav-btn">PLATOS</a>
+        <a href="contacto.html" class="nav-btn">CONTACTO</a>
+        <a href="perfil.html" class="nav-btn active">MI PERFIL</a>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="profile-container">
+            <div class="profile-header">
+                <h2>Mi Perfil</h2>
+            </div>
+
+            <div class="profile-content">
+                <div class="profile-sidebar">
+                    <div class="profile-avatar">
+                        <img src="images/avatar.jpg" alt="Avatar">
+                    </div>
+                    <h3>Juan García</h3>
+                    <p class="profile-role">Usuario Premium</p>
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">24</span>
+                            <span class="stat-label">Recetas</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">156</span>
+                            <span class="stat-label">Seguidores</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">89</span>
+                            <span class="stat-label">Siguiendo</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-main">
+                    <div class="profile-section">
+                        <div class="section-header">
+                            <h3>Información Personal</h3>
+                            <button class="btn-edit-section">Editar</button>
+                        </div>
+                        <div class="section-content">
+                            <div class="info-row">
+                                <label>Nombre:</label>
+                                <span>Juan García López</span>
+                            </div>
+                            <div class="info-row">
+                                <label>Correo:</label>
+                                <span>juan.garcia@example.com</span>
+                            </div>
+                            <div class="info-row">
+                                <label>Edad:</label>
+                                <span>28 años</span>
+                            </div>
+                            <div class="info-row">
+                                <label>Género:</label>
+                                <span>Masculino</span>
+                            </div>
+                            <div class="info-row">
+                                <label>Teléfono:</label>
+                                <span>+34 612 345 678</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profile-section">
+                        <div class="section-header">
+                            <h3>Datos de Salud</h3>
+                            <a href="editar-perfil.html" class="btn-edit-section">Editar</a>
+                        </div>
+                        <div class="section-content">
+                            <div class="info-row">
+                                <label>Peso:</label>
+                                <span>75 kg</span>
+                            </div>
+                            <div class="info-row">
+                                <label>Altura:</label>
+                                <span>1.80 m</span>
+                            </div>
+                            <div class="info-row">
+                                <label>IMC:</label>
+                                <span>23.1 (Normal)</span>
+                            </div>
+                            <div class="info-row">
+                                <label>Meta Calórica Diaria:</label>
+                                <span>2200 kcal</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profile-section">
+                        <div class="section-header">
+                            <h3>Preferencias Dietéticas</h3>
+                            <a href="editar-perfil.html" class="btn-edit-section">Editar</a>
+                        </div>
+                        <div class="section-content">
+                            <div class="info-row">
+                                <label>Dieta:</label>
+                                <span>Balanceada</span>
+                            </div>
+                            <div class="info-row">
+                                <label>Alergias:</label>
+                                <span>Ninguna</span>
+                            </div>
+                            <div class="info-row">
+                                <label>Restricciones:</label>
+                                <span>Ninguna</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profile-section">
+                        <div class="section-header">
+                            <h3>Seguridad</h3>
+                        </div>
+                        <div class="section-content">
+                            <a href="editar-perfil.html" class="btn-change-password">Cambiar Contraseña</a>
+                            <a href="login.html" class="btn-logout">Cerrar Sesión</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img src="images/logo.png" alt="Fit Food Logo">
+            </div>
+            <div class="footer-sections">
+                <div class="footer-column">
+                    <h4>FitFood</h4>
+                    <ul>
+                        <li><a href="#">Biblioteca de recetas</a></li>
+                        <li><a href="#">Configuración de cookies</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Nuestra empresa</h4>
+                    <ul>
+                        <li><a href="#">Prensa</a></li>
+                        <li><a href="#">FitFoodGroup</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Colabora con nosotros</h4>
+                    <ul>
+                        <li><a href="#">Colaboradores</a></li>
+                        <li><a href="#">Influencers</a></li>
+                        <li><a href="#">Afiliados</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; FitFood 2025</p>
+        </div>
+    </footer>
+</body>
+
+</html>

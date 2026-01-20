@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fit Food - Contacto</title>
+    <link rel="stylesheet" href="styles-general.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="search-bar">
+                <input type="text" placeholder="Buscar receta">
+            </div>
+            <div class="logo">
+                <a href="index.html" style="text-decoration: none; color: white; display: flex; align-items: center; gap: 0.5rem;">
+                    <img src="images/logo.png" alt="Fit Food Logo">
+                    <h1>Fit Food</h1>
+                </a>
+            </div>
+            <div class="user-menu">
+                <a href="perfil.html" class="user-icon" title="Perfil">👤</a>
+                <button class="menu-icon">☰</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <a href="index.html" class="nav-btn">INICIO</a>
+        <a href="mis-recetas.html" class="nav-btn">MIS RECETAS</a>
+        <a href="platos.html" class="nav-btn">PLATOS</a>
+        <a href="contacto.html" class="nav-btn active">CONTACTO</a>
+        <a href="perfil.html" class="nav-btn">MI PERFIL</a>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="contacto-container">
+            <div class="contacto-header">
+                <h2>Contáctanos</h2>
+                <p class="subtitle">Nos encantaría saber de ti. Envíanos tu mensaje y te responderemos lo antes posible.</p>
+            </div>
+
+            <div class="contacto-content">
+                <!-- Contact Form -->
+                <div class="contacto-form-section">
+                    <form class="contacto-form">
+                        <div class="form-group">
+                            <label for="nombre">Nombre Completo *</label>
+                            <input type="text" id="nombre" name="nombre" placeholder="Tu nombre" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Correo Electrónico *</label>
+                            <input type="email" id="email" name="email" placeholder="tu@correo.com" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="telefono">Teléfono</label>
+                            <input type="tel" id="telefono" name="telefono" placeholder="+34 612 345 678">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="asunto">Asunto *</label>
+                            <select id="asunto" name="asunto" required>
+                                <option value="">Selecciona un asunto</option>
+                                <option value="soporte">Soporte Técnico</option>
+                                <option value="sugerencia">Sugerencia o Idea</option>
+                                <option value="reportar">Reportar un Problema</option>
+                                <option value="colaboracion">Colaboración</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="mensaje">Mensaje *</label>
+                            <textarea id="mensaje" name="mensaje" placeholder="Cuéntanos cómo podemos ayudarte..." rows="6" required></textarea>
+                        </div>
+
+                        <button type="submit" class="btn-submit">Enviar Mensaje</button>
+                    </form>
+                </div>
+
+                <!-- Contact Information -->
+                <div class="contacto-info-section">
+                    <div class="info-card">
+                        <div class="info-icon">📍</div>
+                        <h3>Ubicación</h3>
+                        <p>Calle Principal, 123</p>
+                        <p>28001 Madrid, España</p>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-icon">📞</div>
+                        <h3>Teléfono</h3>
+                        <p>+34 912 345 678</p>
+                        <p class="office-hours">Lun-Vie 9:00-18:00</p>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-icon">✉️</div>
+                        <h3>Correo Electrónico</h3>
+                        <p><a href="mailto:info@fitfood.com">info@fitfood.com</a></p>
+                        <p><a href="mailto:soporte@fitfood.com">soporte@fitfood.com</a></p>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-icon">⏰</div>
+                        <h3>Horario de Atención</h3>
+                        <p>Lunes - Viernes</p>
+                        <p>9:00 AM - 6:00 PM</p>
+                    </div>
+
+                    <div class="social-section">
+                        <h3>Síguenos en Redes</h3>
+                        <div class="social-links">
+                            <a href="#" class="social-link">Facebook</a>
+                            <a href="#" class="social-link">Instagram</a>
+                            <a href="#" class="social-link">Twitter</a>
+                            <a href="#" class="social-link">LinkedIn</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img src="images/logo.png" alt="Fit Food Logo">
+            </div>
+            <div class="footer-sections">
+                <div class="footer-column">
+                    <h4>FitFood</h4>
+                    <ul>
+                        <li><a href="#">Biblioteca de recetas</a></li>
+                        <li><a href="#">Configuración de cookies</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Nuestra empresa</h4>
+                    <ul>
+                        <li><a href="#">Prensa</a></li>
+                        <li><a href="#">FitFoodGroup</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Colabora con nosotros</h4>
+                    <ul>
+                        <li><a href="contacto.html">Colaboradores</a></li>
+                        <li><a href="contacto.html">Influencers</a></li>
+                        <li><a href="contacto.html">Afiliados</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; FitFood 2025</p>
+            <ul class="footer-links">
+                <li><a href="#">Términos y condiciones</a></li>
+                <li><a href="#">Política de privacidad</a></li>
+                <li><a href="#">Política de cookies</a></li>
+                <li><a href="#">Declaración de accesibilidad</a></li>
+            </ul>
+        </div>
+    </footer>
+</body>
+
+</html>
