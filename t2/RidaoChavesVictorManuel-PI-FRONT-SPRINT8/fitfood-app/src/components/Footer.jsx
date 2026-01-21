@@ -1,12 +1,11 @@
 import React from 'react';
-import './Footer.css';
 
 const Footer = () => {
     return (
         <footer className="footer">
             <div className="footer-content">
                 <div className="footer-logo">
-                    <img src="/logo.png" alt="FitFood" className="footer-logo-img" />
+                    <img src="/logoFitFood.png" alt="FitFood" className="footer-logo-img" />
                 </div>
 
                 <div className="footer-columns">

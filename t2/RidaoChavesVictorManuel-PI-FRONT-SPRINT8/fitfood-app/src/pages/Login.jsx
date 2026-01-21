@@ -1,13 +1,26 @@
 import React, { useState } from 'react';
-import './Login.css';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
     const [usuario, setUsuario] = useState('');
     const [contrasena, setContrasena] = useState('');
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
+    const { login } = useAuth();
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('Login:', { usuario, contrasena });
+        
+        // Validar credenciales
+        if (usuario === 'victor_98' && contrasena === 'Admin123') {
+            // Login exitoso
+            login({ usuario, nombre: 'Victor Manuel' });
+            navigate('/inicio');
+        } else {
+            // Mostrar error
+            setError('Usuario o contraseña incorrectos');
+        }
     };
 
     return (
@@ -21,6 +34,8 @@ const Login = () => {
                 <h2 className="login-title">Iniciar sesión</h2>
 
                 <form onSubmit={handleSubmit} className="login-form">
+                    {error && <div className="error-message">{error}</div>}
+                    
                     <div className="form-group">
                         <label htmlFor="usuario">
                             Usuario
