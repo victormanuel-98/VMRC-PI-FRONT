@@ -143,7 +143,7 @@ src/
 ### Página de Login
 | Figma (Diseño) | Implementación Final |
 |----------------|---------------------|
-| ![Imagen Figma Login](./public/images/FigmaLogin.png) | ![Imagen Final Login](./public/images/login.png) |
+| ![Imagen Figma Login](t2/RidaoChavesVictorManuel-PI-FRONT-SPRINT8/public/images/FigmaLogin.png) | ![Imagen Final Login](./public/images/login.png) |
 
 **Diferencias clave**:
 - ✅ Mantiene estructura de dos secciones (welcome + formulario)
