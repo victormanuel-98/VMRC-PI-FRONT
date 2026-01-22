@@ -143,7 +143,7 @@ src/
 ### Página de Login
 | Figma (Diseño) | Implementación Final |
 |----------------|---------------------|
-| ![Imagen Figma Login](t2/RidaoChavesVictorManuel-PI-FRONT-SPRINT8/public/images/FigmaLogin.png) | ![Imagen Final Login](./public/images/login.png) |
+| ![Imagen Figma Login](./fitfood-app/public/images/FigmaLogin.png) | ![Imagen Final Login](./fitfood-app/public/images/login.png) |
 
 **Diferencias clave**:
 - ✅ Mantiene estructura de dos secciones (welcome + formulario)
@@ -155,7 +155,7 @@ src/
 ### Página de Inicio (Home)
 | Figma (Diseño) | Implementación Final |
 |----------------|---------------------|
-| ![Imagen Figma Home](/public/images/FigmaHome.png) | ![Imagen Final Home](/public/images/home.png) |
+| ![Imagen Figma Home](./fitfood-app/public/images/FigmaHome.png) | ![Imagen Final Home](./fitfood-app/public/images/home.png) |
 
 **Diferencias clave**:
 - ✅ Hero section con título e imagen
@@ -167,7 +167,7 @@ src/
 ### Perfil de usuario
 | Figma (Diseño) | Implementación Final |
 |----------------|---------------------|
-| ![Imagen Figma Recetas](/public/images/FigmaUserProfile.png) | ![Imagen Final Recetas](/public/images/profile.png) |
+| ![Imagen Figma Recetas](./fitfood-app/public/images/FigmaUserProfile.png) | ![Imagen Final Recetas](./fitfood-app/public/images/profile.png) |
 
 **Diferencias clave**:
 - ✅ Grid 4x5 (15 recetas)
@@ -180,7 +180,7 @@ src/
 
 ### GIF de Navegación Completa
 
-![Navegación FitFood](/public/images/recorrido.gif)
+![Navegación FitFood](./fitfood-app/public/images/recorrido.gif)
 
 ---
 
