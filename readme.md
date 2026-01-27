@@ -23,9 +23,9 @@ El frontend proporciona la interfaz de usuario, permitiendo que los usuarios añ
 - npm o yarn  
 - Git  
 - (Opcional) Firebase CLI para autenticación y almacenamiento
-
+```
 ├── public/
 │   └── index.html       # Archivo HTML principal
 │
 └── package.json         # Configuración y dependencias del proyecto
-
+```
