@@ -1,12 +1,12 @@
-# 🍕 SocialFood - Frontend
+# FitFood - Frontend
 
 ## 📝 Descripción
-Este repositorio contiene el **frontend** del proyecto **SocialFood**, una aplicación social centrada en la creación y compartición de recetas personalizadas.  
+Este repositorio contiene el **frontend** del proyecto **FitFood**, una aplicación social centrada en la creación y compartición de recetas personalizadas.  
 El frontend proporciona la interfaz de usuario, permitiendo que los usuarios añadan ingredientes, consulten calorías, compartan recetas y valoren platos.
 
 ---
 
-## 🧰 Tecnologías utilizadas
+## Tecnologías utilizadas
 - **HTML5** – Estructura del sitio web  
 - **CSS3** – Estilos y diseño visual  
 - **JavaScript (ES6+)** – Lógica de interacción  
@@ -16,7 +16,7 @@ El frontend proporciona la interfaz de usuario, permitiendo que los usuarios añ
 
 ---
 
-## ⚙️ Instalación y ejecución local
+## Instalación y ejecución local
 
 ### Requisitos previos
 - Node.js (versión LTS recomendada)  
