@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Breadcrumbs from '../components/Breadcrumbs';
-import { obtenerRecetas, eliminarReceta } from '../services/api';
+import { obtenerRecetasUsuario, eliminarReceta } from '../services/api';
 
 const MyRecipes = () => {
     const breadcrumbItems = [
@@ -15,9 +15,25 @@ const MyRecipes = () => {
     const [error, setError] = useState(false);
     const [recipes, setRecipes] = useState([]);
 
+    const recipeSummary = useMemo(() => {
+        const total = recipes.length;
+        const avgCalories = total
+            ? Math.round(recipes.reduce((sum, receta) => sum + (receta.calorias || 0), 0) / total)
+            : 0;
+        const latestDate = total
+            ? new Date(Math.max(...recipes.map((receta) => new Date(receta.createdAt).getTime()))).toLocaleDateString('es-ES')
+            : '-';
+
+        return {
+            total,
+            avgCalories,
+            latestDate
+        };
+    }, [recipes]);
+
     useEffect(() => {
         cargarRecetas();
-    }, []);
+    }, [user?.id]);
 
     const cargarRecetas = async () => {
         try {
@@ -30,7 +46,12 @@ const MyRecipes = () => {
                 return;
             }
 
-            const respuesta = await obtenerRecetas(token);
+            if (!user?.id) {
+                setError(true);
+                return;
+            }
+
+            const respuesta = await obtenerRecetasUsuario(user.id);
             
             if (respuesta.recetas) {
                 setRecipes(respuesta.recetas);
@@ -131,6 +152,33 @@ const MyRecipes = () => {
                     <h1 className="recipes-title">MIS RECETAS</h1>
                     <p className="recipes-subtitle">Aquí puedes ver tus recetas creadas</p>
                 </div>
+
+                <section className="my-recipes-summary-grid">
+                    <article className="my-recipes-summary-card">
+                        <span>Total de recetas</span>
+                        <strong>{recipeSummary.total}</strong>
+                    </article>
+                    <article className="my-recipes-summary-card">
+                        <span>Calorías medias</span>
+                        <strong>{recipeSummary.avgCalories} kcal</strong>
+                    </article>
+                    <article className="my-recipes-summary-card">
+                        <span>Última creación</span>
+                        <strong>{recipeSummary.latestDate}</strong>
+                    </article>
+                </section>
+
+                <section className="my-recipes-actions">
+                    <button className="recipe-button" onClick={() => navigate('/recetas/colecciones')}>
+                        Ver colecciones
+                    </button>
+                    <button className="recipe-button" onClick={() => navigate('/recetas/plan')}>
+                        Plan semanal
+                    </button>
+                    <button className="recipe-button" onClick={() => navigate('/platos/explorar')}>
+                        Explorar platos
+                    </button>
+                </section>
 
                 <div className="recipes-list">
                     {recipes.map((receta) => (

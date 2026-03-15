@@ -17,12 +17,24 @@ import aiRoutes from './routes/aiRoutes.js';
 
 const app = express();
 
+const allowedOrigins = [
+    process.env.CORS_ORIGIN,
+    'http://localhost:5173',
+    'http://localhost:5174',
+].filter(Boolean);
+
 // Middlewares de seguridad
 app.use(helmet());
 
 app.use(
     cors({
-        origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+        origin: (origin, callback) => {
+            if (!origin || allowedOrigins.includes(origin)) {
+                return callback(null, true);
+            }
+
+            return callback(new Error('Origen no permitido por CORS'));
+        },
         credentials: true,
     })
 );

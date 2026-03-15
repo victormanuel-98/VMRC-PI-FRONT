@@ -1,7 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Breadcrumbs from '../components/Breadcrumbs';
+import { useAuth } from '../context/AuthContext';
+import { useUiPreferences } from '../context/UiPreferencesContext';
+import { obtenerPerfilUsuario, actualizarPerfilUsuario } from '../services/api';
 
 const Settings = () => {
+  const { user } = useAuth();
+  const { preferences, setLanguage, setTheme, t } = useUiPreferences();
   const breadcrumbItems = [
     { label: 'Inicio', path: '/inicio' },
     { label: 'Ajustes', path: '/ajustes' }
@@ -14,29 +19,112 @@ const Settings = () => {
   });
 
   const [saved, setSaved] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const cargarAjustes = async () => {
+      try {
+        const localSettings = localStorage.getItem('userSettings');
+        if (localSettings) {
+          const parsed = JSON.parse(localSettings);
+          setSettings((prev) => ({
+            ...prev,
+            ...parsed,
+            idioma: parsed.idioma || (preferences.language === 'en' ? 'ingles' : 'espanol'),
+            iluminacion: parsed.iluminacion || (preferences.theme === 'dark' ? 'oscuro' : 'claro')
+          }));
+        } else {
+          setSettings((prev) => ({
+            ...prev,
+            idioma: preferences.language === 'en' ? 'ingles' : 'espanol',
+            iluminacion: preferences.theme === 'dark' ? 'oscuro' : 'claro'
+          }));
+        }
+
+        if (!user?.id) {
+          setLoading(false);
+          return;
+        }
+
+        const token = localStorage.getItem('token');
+        const respuesta = await obtenerPerfilUsuario(user.id, token);
+
+        if (respuesta?.usuario) {
+          setSettings((prev) => ({
+            ...prev,
+            comentarios: respuesta.usuario.visibilidad === 'privada' ? 'privado' : 'publico',
+          }));
+        }
+      } catch {
+        // fallback a localStorage
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    cargarAjustes();
+  }, [user?.id]);
 
   const handleChange = (category, value) => {
     setSettings((prev) => ({ ...prev, [category]: value }));
   };
 
-  const handleSave = () => {
-    localStorage.setItem('userSettings', JSON.stringify(settings));
+  const handleSave = async () => {
+    const mergedSettings = {
+      ...settings,
+      idioma: settings.idioma,
+      iluminacion: settings.iluminacion
+    };
+    localStorage.setItem('userSettings', JSON.stringify(mergedSettings));
+
+    setLanguage(settings.idioma === 'ingles' ? 'en' : 'es');
+    setTheme(settings.iluminacion === 'oscuro' ? 'dark' : 'light');
+
+    try {
+      if (user?.id) {
+        const token = localStorage.getItem('token');
+        await actualizarPerfilUsuario(
+          user.id,
+          {
+            visibilidad: settings.comentarios === 'privado' ? 'privada' : 'publica',
+          },
+          token
+        );
+      }
+    } catch {
+      // mantenemos guardado local aunque falle backend
+    }
+
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };
+
+  if (loading) {
+    return (
+      <div className="settings-page">
+        <Breadcrumbs items={breadcrumbItems} />
+        <div className="settings-container">
+          <p>Cargando ajustes...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="settings-page">
       <Breadcrumbs items={breadcrumbItems} />
       <div className="settings-container">
-        <h1 className="settings-title">AJUSTES GENERALES</h1>
+        <div className="settings-top">
+          <h1 className="settings-title">{t('settings.title', 'AJUSTES GENERALES')}</h1>
+          <p className="settings-subtitle">{t('settings.subtitle', 'Controla idioma, apariencia y preferencias de interacción.')}</p>
+        </div>
 
         <div className="settings-card">
           <div className="setting-row">
-            <label className="setting-label">Idioma:</label>
+            <label className="setting-label">{t('settings.language', 'Idioma')}:</label>
             <div className="setting-options">
               <label className="option-checkbox">
-                <span>Español</span>
+                <span>{t('settings.spanish', 'Español')}</span>
                 <input
                   type="radio"
                   name="idioma"
@@ -46,7 +134,7 @@ const Settings = () => {
                 />
               </label>
               <label className="option-checkbox">
-                <span>Inglés</span>
+                <span>{t('settings.english', 'Inglés')}</span>
                 <input
                   type="radio"
                   name="idioma"
@@ -59,10 +147,10 @@ const Settings = () => {
           </div>
 
           <div className="setting-row">
-            <label className="setting-label">Comentarios:</label>
+            <label className="setting-label">{t('settings.comments', 'Comentarios')}:</label>
             <div className="setting-options">
               <label className="option-checkbox">
-                <span>Público</span>
+                <span>{t('settings.public', 'Público')}</span>
                 <input
                   type="radio"
                   name="comentarios"
@@ -72,7 +160,7 @@ const Settings = () => {
                 />
               </label>
               <label className="option-checkbox">
-                <span>Privado</span>
+                <span>{t('settings.private', 'Privado')}</span>
                 <input
                   type="radio"
                   name="comentarios"
@@ -85,10 +173,10 @@ const Settings = () => {
           </div>
 
           <div className="setting-row">
-            <label className="setting-label">Iluminación:</label>
+            <label className="setting-label">{t('settings.appearance', 'Iluminación')}:</label>
             <div className="setting-options">
               <label className="option-checkbox">
-                <span>Modo claro</span>
+                <span>{t('settings.light', 'Modo claro')}</span>
                 <input
                   type="radio"
                   name="iluminacion"
@@ -98,7 +186,7 @@ const Settings = () => {
                 />
               </label>
               <label className="option-checkbox">
-                <span>Modo oscuro</span>
+                <span>{t('settings.dark', 'Modo oscuro')}</span>
                 <input
                   type="radio"
                   name="iluminacion"
@@ -111,12 +199,12 @@ const Settings = () => {
           </div>
 
           <div className="setting-row device-row">
-            <label className="setting-label">Dispositivos:</label>
+            <label className="setting-label">{t('settings.devices', 'Dispositivos')}:</label>
             <div className="device-question">
-              <span className="device-text">¿Conectar con la cuenta de tu móvil?</span>
+              <span className="device-text">{t('settings.connectMobile', '¿Conectar con la cuenta de tu móvil?')}</span>
               <div className="setting-options">
                 <label className="option-checkbox">
-                  <span>Sí</span>
+                  <span>{t('settings.yes', 'Sí')}</span>
                   <input
                     type="radio"
                     name="conectarDispositivo"
@@ -126,7 +214,7 @@ const Settings = () => {
                   />
                 </label>
                 <label className="option-checkbox">
-                  <span>No</span>
+                  <span>{t('settings.no', 'No')}</span>
                   <input
                     type="radio"
                     name="conectarDispositivo"
@@ -141,12 +229,12 @@ const Settings = () => {
         </div>
 
         <button className="save-button" onClick={handleSave}>
-          Guardar cambios
+          {t('settings.save', 'Guardar cambios')}
         </button>
 
         {saved && (
           <div className="success-message">
-            Cambios guardados correctamente
+            {t('settings.saved', 'Cambios guardados correctamente')}
           </div>
         )}
       </div>

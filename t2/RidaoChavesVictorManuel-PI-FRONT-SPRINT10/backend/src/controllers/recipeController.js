@@ -75,11 +75,18 @@ export const crearReceta = async (req, res) => {
 
 export const obtenerRecetas = async (req, res) => {
     try {
-        const { categoria, dificultad, pagina = 1, limite = 10 } = req.query;
+        const { categoria, dificultad, q, pagina = 1, limite = 10 } = req.query;
         const filtro = {};
 
         if (categoria) filtro.categoria = categoria;
         if (dificultad) filtro.dificultad = dificultad;
+        if (q) {
+            filtro.$or = [
+                { nombre: { $regex: q, $options: 'i' } },
+                { descripcionCorta: { $regex: q, $options: 'i' } },
+                { descripcionLarga: { $regex: q, $options: 'i' } },
+            ];
+        }
 
         const skip = (pagina - 1) * limite;
 

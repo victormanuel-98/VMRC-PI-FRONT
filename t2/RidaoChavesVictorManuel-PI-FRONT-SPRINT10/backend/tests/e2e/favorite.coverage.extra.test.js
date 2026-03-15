@@ -1,8 +1,8 @@
 import request from 'supertest';
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import app from '../src/app.js';
-import Favorite from '../src/models/Favorite.js';
+import app from '../../src/app.js';
+import Favorite from '../../src/models/Favorite.js';
 
 let mongoServer;
 let token = 'Bearer fake_token';

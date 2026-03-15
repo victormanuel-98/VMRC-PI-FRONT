@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { registro, subirImagenPerfil } from '../services/api';
+import { registro } from '../services/api';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -11,17 +11,17 @@ const Register = () => {
     apellidos: '',
     usuario: '',
     contrasena: '',
-    correo: '',
+    email: '',
     telefono: '',
     notificaciones: false,
-    visibilidad: 'publico'
+    visibilidad: 'publica'
   });
 
   const [errors, setErrors] = useState({});
   const [submitMessage, setSubmitMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const requiredFields = ['nombre', 'apellidos', 'usuario', 'contrasena', 'correo'];
+  const requiredFields = ['nombre', 'apellidos', 'usuario', 'contrasena', 'email'];
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -46,23 +46,11 @@ const Register = () => {
       };
       readerPreview.readAsDataURL(file);
 
-      const readerUpload = new FileReader();
-      readerUpload.onloadend = async () => {
-        try {
-          setLoading(true);
-          const base64 = readerUpload.result;
-          const respuesta = await subirImagenPerfil(base64, null);
-          
-          if (respuesta.url) {
-            setImagenUrl(respuesta.url);
-          }
-        } catch (err) {
-          console.error('Error al subir imagen:', err);
-        } finally {
-          setLoading(false);
-        }
+      const readerBase64 = new FileReader();
+      readerBase64.onloadend = () => {
+        setImagenUrl(readerBase64.result);
       };
-      readerUpload.readAsDataURL(file);
+      readerBase64.readAsDataURL(file);
     }
   };
 
@@ -75,11 +63,12 @@ const Register = () => {
       }
     });
 
-    if (formData.correo && !formData.correo.includes('@')) {
-      newErrors.correo = true;
+    if (formData.email && !formData.email.includes('@')) {
+      newErrors.email = true;
     }
 
-    if (formData.contrasena && formData.contrasena.length < 6) {
+    const strongPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+    if (formData.contrasena && !strongPassword.test(formData.contrasena)) {
       newErrors.contrasena = true;
     }
 
@@ -102,7 +91,7 @@ const Register = () => {
         apellidos: formData.apellidos,
         usuario: formData.usuario,
         contrasena: formData.contrasena,
-        correo: formData.correo,
+        email: formData.email,
         telefono: formData.telefono,
         foto: imagenUrl,
         notificaciones: formData.notificaciones,
@@ -121,7 +110,7 @@ const Register = () => {
         setErrors({ general: respuesta.mensaje || 'Error al crear la cuenta' });
       }
     } catch (err) {
-      setErrors({ general: 'Error de conexión. Verifica que el servidor esté activo.' });
+      setErrors({ general: err?.message || 'Error de conexión. Verifica que el servidor esté activo.' });
     } finally {
       setLoading(false);
     }
@@ -200,18 +189,18 @@ const Register = () => {
                   value={formData.contrasena}
                   onChange={handleChange}
                   className={errors.contrasena ? 'input-error' : ''}
-                  placeholder="Tu contraseña (mín. 6 caracteres)"
+                  placeholder="Mín. 8, mayúscula, número y símbolo"
                 />
               </div>
 
               <div className="form-row-register">
-                <label>Correo electrónico {requiredFields.includes('correo') && <span className="required-icon">▶</span>}</label>
+                <label>Correo electrónico {requiredFields.includes('email') && <span className="required-icon">▶</span>}</label>
                 <input
                   type="email"
-                  name="correo"
-                  value={formData.correo}
+                  name="email"
+                  value={formData.email}
                   onChange={handleChange}
-                  className={errors.correo ? 'input-error' : ''}
+                  className={errors.email ? 'input-error' : ''}
                   placeholder="tu@email.com"
                 />
               </div>
@@ -248,8 +237,8 @@ const Register = () => {
                     <input
                       type="radio"
                       name="visibilidad"
-                      value="publico"
-                      checked={formData.visibilidad === 'publico'}
+                      value="publica"
+                      checked={formData.visibilidad === 'publica'}
                       onChange={handleChange}
                     />
                     Público
@@ -258,8 +247,8 @@ const Register = () => {
                     <input
                       type="radio"
                       name="visibilidad"
-                      value="privado"
-                      checked={formData.visibilidad === 'privado'}
+                      value="privada"
+                      checked={formData.visibilidad === 'privada'}
                       onChange={handleChange}
                     />
                     Privado

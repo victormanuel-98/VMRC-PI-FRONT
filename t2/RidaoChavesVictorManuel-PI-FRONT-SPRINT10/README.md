@@ -414,6 +414,31 @@ npm run dev
 ```
 El servidor estará en [http://localhost:5000](http://localhost:5000)
 
+### Configuración del Frontend
+
+1. **Instalar dependencias**:
+
+```
+cd frontend
+npm install
+```
+
+2. **Configurar variable de entorno** (opcional, por defecto usa `http://localhost:5000/api`):
+
+Crear archivo `.env` en `/frontend`:
+
+```
+VITE_API_URL=http://localhost:5000/api
+```
+
+3. **Iniciar frontend**:
+
+```
+npm run dev
+```
+
+La aplicación estará disponible en [http://localhost:5173](http://localhost:5173)
+
 ### Build para Producción
 
 ```

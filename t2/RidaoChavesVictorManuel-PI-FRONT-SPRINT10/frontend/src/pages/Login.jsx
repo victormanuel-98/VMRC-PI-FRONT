@@ -22,10 +22,11 @@ const Login = () => {
             if (respuesta.token) {
                 localStorage.setItem('token', respuesta.token);
                 login({
+                    id: respuesta.usuario.id,
                     usuario: respuesta.usuario.usuario,
                     nombre: respuesta.usuario.nombre,
                     rol: respuesta.usuario.rol,
-                    id: respuesta.usuario._id
+                    email: respuesta.usuario.email,
                 });
                 
                 navigate('/inicio');
@@ -33,7 +34,7 @@ const Login = () => {
                 setError(respuesta.mensaje || 'Error al iniciar sesión');
             }
         } catch (err) {
-            setError('Error de conexión. Verifica que el servidor esté activo.');
+            setError(err?.message || 'Error de conexión. Verifica que el servidor esté activo.');
         } finally {
             setLoading(false);
         }

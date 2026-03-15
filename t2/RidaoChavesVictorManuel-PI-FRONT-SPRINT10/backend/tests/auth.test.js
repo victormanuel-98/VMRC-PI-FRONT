@@ -4,6 +4,7 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import app from '../src/app.js';
+import User from '../src/models/User.js';
 import { autenticar, autorizarRol } from '../src/middlewares/authMiddleware.js';
 
 let mongoServer;
@@ -17,37 +18,56 @@ beforeAll(async () => {
     process.env.MONGODB_URI = uri;
 
     await mongoose.connect(uri);
-// ...existing code...
-    afterAll(async () => {
-        await mongoose.disconnect();
-        if (mongoServer) {
-            await mongoServer.stop();
-        }
-    });
+});
 
-        const res = await request(app)
+afterEach(async () => {
+    await User.deleteMany({});
+});
+
+afterAll(async () => {
     await mongoose.disconnect();
     if (mongoServer) {
         await mongoServer.stop();
     }
 });
-            .post('/api/auth/login')
+
+describe('Auth endpoints', () => {
+    test('POST /api/auth/registro y login correcto', async () => {
+        const registroRes = await request(app)
+            .post('/api/auth/registro')
             .send({
                 usuario: 'victor_98',
+                email: 'victor@example.com',
+                nombre: 'Victor',
+                apellidos: 'Ridao',
                 contrasena: 'Admin123!',
             });
 
-        expect(res.statusCode).toBe(200);
-        expect(res.body.token).toBeDefined();
+        expect(registroRes.statusCode).toBe(201);
+        expect(registroRes.body.token).toBeDefined();
+
+        const loginRes = await request(app)
+            .post('/api/auth/login')
+            .send({ usuario: 'victor_98', contrasena: 'Admin123!' });
+
+        expect(loginRes.statusCode).toBe(200);
+        expect(loginRes.body.token).toBeDefined();
     });
 
-    test('POST /api/auth/login - login incorrecto', async () => {
-        const res = await request(app)
-            .post('/api/auth/login')
+    test('POST /api/auth/login - credenciales incorrectas', async () => {
+        await request(app)
+            .post('/api/auth/registro')
             .send({
                 usuario: 'victor_98',
-                contrasena: 'WrongPass123!',
+                email: 'victor@example.com',
+                nombre: 'Victor',
+                apellidos: 'Ridao',
+                contrasena: 'Admin123!',
             });
+
+        const res = await request(app)
+            .post('/api/auth/login')
+            .send({ usuario: 'victor_98', contrasena: 'WrongPass123!' });
 
         expect(res.statusCode).toBe(401);
     });
@@ -81,6 +101,16 @@ beforeAll(async () => {
     });
 
     test('POST /api/auth/registro - usuario duplicado', async () => {
+        await request(app)
+            .post('/api/auth/registro')
+            .send({
+                usuario: 'victor_98',
+                email: 'victor@example.com',
+                nombre: 'Victor',
+                apellidos: 'Ridao',
+                contrasena: 'Admin123!',
+            });
+
         const res = await request(app)
             .post('/api/auth/registro')
             .send({
@@ -95,18 +125,23 @@ beforeAll(async () => {
     });
 
     test('GET /api/auth/verificar - token válido', async () => {
-        const login = await request(app)
-            .post('/api/auth/login')
+        await request(app)
+            .post('/api/auth/registro')
             .send({
                 usuario: 'victor_98',
+                email: 'victor@example.com',
+                nombre: 'Victor',
+                apellidos: 'Ridao',
                 contrasena: 'Admin123!',
             });
 
-        const token = login.body.token;
+        const loginRes = await request(app)
+            .post('/api/auth/login')
+            .send({ usuario: 'victor_98', contrasena: 'Admin123!' });
 
         const res = await request(app)
             .get('/api/auth/verificar')
-            .set('Authorization', `Bearer ${token}`);
+            .set('Authorization', `Bearer ${loginRes.body.token}`);
 
         expect(res.statusCode).toBe(200);
         expect(res.body.valido).toBe(true);

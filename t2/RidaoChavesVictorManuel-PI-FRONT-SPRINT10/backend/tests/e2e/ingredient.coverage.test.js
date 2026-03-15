@@ -1,8 +1,8 @@
 import request from 'supertest';
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import app from '../src/app.js';
-import Ingredient from '../src/models/Ingredient.js';
+import app from '../../src/app.js';
+import Ingredient from '../../src/models/Ingredient.js';
 
 let mongoServer;
 let token = 'Bearer fake_token'; // Simula autenticación

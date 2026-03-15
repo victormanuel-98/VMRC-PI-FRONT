@@ -1,28 +1,44 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Breadcrumbs from '../components/Breadcrumbs';
 import { obtenerRecetas } from '../services/api';
 
-const BreakfastRecipes = () => {
+const BreakfastRecipes = ({ categoria = 'desayuno', titulo = 'Desayunos', descripcion = 'Recetas saludables para comenzar tu día' }) => {
+    const categoriaLabel = titulo.replace(/s$/, '');
     const breadcrumbItems = [
         { label: 'Inicio', path: '/inicio' },
         { label: 'Platos', path: '/inicio' },
-        { label: 'Desayuno', path: '/platos/desayuno' }
+        { label: titulo, path: `/platos/${categoria}` }
     ];
     const navigate = useNavigate();
+    const location = useLocation();
     const [recipes, setRecipes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
 
+    const quickCategories = [
+        { label: 'Explorar', path: '/platos/explorar' },
+        { label: 'Desayuno', path: '/platos/desayuno' },
+        { label: 'Almuerzo', path: '/platos/almuerzo' },
+        { label: 'Cena', path: '/platos/cena' },
+        { label: 'Otros', path: '/platos/otros' }
+    ];
+
     useEffect(() => {
         cargarRecetasDesayuno();
-    }, []);
+    }, [categoria, location.search]);
 
     const cargarRecetasDesayuno = async () => {
         try {
             setLoading(true);
             setError(false);
-            const respuesta = await obtenerRecetas({ categoria: 'desayuno' });
+            const params = new URLSearchParams(location.search);
+            const busqueda = params.get('busqueda')?.trim() || '';
+            const filtroCategoria = categoria === 'otros' ? {} : { categoria };
+            if (busqueda) {
+                filtroCategoria.q = busqueda;
+            }
+            const respuesta = await obtenerRecetas(filtroCategoria);
             
             if (respuesta.recetas) {
                 setRecipes(respuesta.recetas);
@@ -66,7 +82,7 @@ const BreakfastRecipes = () => {
                             <path d="M12 8v4M12 16h.01" stroke="#d32f2f" strokeWidth="2" strokeLinecap="round"/>
                         </svg>
                         <h2>Error al cargar las recetas</h2>
-                        <p>No se pudieron cargar las recetas de desayuno. Por favor, intenta de nuevo.</p>
+                        <p>No se pudieron cargar las recetas. Por favor, intenta de nuevo.</p>
                         <button onClick={cargarRecetasDesayuno} className="retry-button">
                             Reintentar
                         </button>
@@ -85,10 +101,10 @@ const BreakfastRecipes = () => {
                         <svg width="100" height="100" viewBox="0 0 24 24" fill="none">
                             <path d="M19 11H5M19 11a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2M19 11V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" stroke="#6b95a5" strokeWidth="2" strokeLinecap="round"/>
                         </svg>
-                        <h2>No hay recetas de desayuno</h2>
-                        <p>Aún no hay recetas de desayuno disponibles. ¡Sé el primero en crear una!</p>
+                        <h2>No hay recetas disponibles</h2>
+                        <p>Aún no hay recetas de esta categoría disponibles. ¡Sé el primero en crear una!</p>
                         <button onClick={() => navigate('/recetas/crear')} className="create-first-button">
-                            Crear receta de desayuno
+                            Crear receta de {categoriaLabel.toLowerCase()}
                         </button>
                     </div>
                 </div>
@@ -100,8 +116,34 @@ const BreakfastRecipes = () => {
         <div className="breakfast-page">
             <Breadcrumbs items={breadcrumbItems} />
             <div className="breakfast-container">
-                <h1 className="breakfast-title">Desayunos</h1>
-                <p className="breakfast-subtitle">Recetas saludables para comenzar tu día</p>
+                <h1 className="breakfast-title">{titulo}</h1>
+                <p className="breakfast-subtitle">{descripcion}</p>
+
+                <section className="plates-quick-nav">
+                    {quickCategories.map((item) => (
+                        <button
+                            key={item.path}
+                            className={`plates-chip ${location.pathname === item.path ? 'active' : ''}`}
+                            onClick={() => navigate(item.path)}
+                        >
+                            {item.label}
+                        </button>
+                    ))}
+                </section>
+
+                {recipes[0] && (
+                    <section className="plates-highlight-card">
+                        <img src={recipes[0].imagen || '/platos/receta-bol.png'} alt={recipes[0].nombre} />
+                        <div>
+                            <span className="plates-highlight-kicker">Recomendación de hoy</span>
+                            <h2>{recipes[0].nombre}</h2>
+                            <p>{recipes[0].descripcionCorta || 'Una receta ideal para mantener tu rutina saludable con buen sabor.'}</p>
+                            <button className="recipe-button" onClick={() => handleVerReceta(recipes[0]._id)}>
+                                Ver recomendación
+                            </button>
+                        </div>
+                    </section>
+                )}
                 
                 <div className="breakfast-grid">
                     {recipes.map((recipe) => (

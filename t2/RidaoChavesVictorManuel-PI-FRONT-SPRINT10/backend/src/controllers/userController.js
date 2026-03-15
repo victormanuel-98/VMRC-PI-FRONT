@@ -38,7 +38,7 @@ const esContraseniaFuerte = (contrasena) => {
 
 export const registrar = async (req, res) => {
     try {
-        const { usuario, email, nombre, apellidos, contrasena, rol } = req.body;
+        const { usuario, email, nombre, apellidos, contrasena, rol, telefono, foto, notificaciones, visibilidad } = req.body;
 
         if (!usuario || !email || !nombre || !contrasena) {
             return res.status(400).json({ mensaje: 'Todos los campos obligatorios deben ser completados' });
@@ -66,6 +66,10 @@ export const registrar = async (req, res) => {
             apellidos,
             contrasena,
             rol: rol || 'usuario',
+            telefono: telefono || null,
+            foto: foto || null,
+            notificaciones: typeof notificaciones === 'boolean' ? notificaciones : true,
+            visibilidad: visibilidad === 'privado' ? 'privada' : visibilidad === 'publico' ? 'publica' : visibilidad,
         });
 
         await nuevoUsuario.save();
@@ -194,7 +198,7 @@ export const obtenerPerfil = async (req, res) => {
 export const actualizarPerfil = async (req, res) => {
     try {
         const { id } = req.params;
-        const { nombre, apellidos, email, telefono, foto, biografia, notificaciones, visibilidad, contrasenaActual, contrasenaNueva } = req.body;
+        const { nombre, apellidos, usuario: nuevoUsuario, email, telefono, foto, biografia, notificaciones, visibilidad, contrasenaActual, contrasenaNueva } = req.body;
 
         if (req.usuario.id !== id && req.usuario.rol !== 'admin') {
             return res.status(403).json({ mensaje: 'No autorizado para modificar este perfil' });
@@ -212,6 +216,14 @@ export const actualizarPerfil = async (req, res) => {
         if (biografia !== undefined) usuario.biografia = biografia;
         if (notificaciones !== undefined) usuario.notificaciones = notificaciones;
         if (visibilidad !== undefined) usuario.visibilidad = visibilidad;
+
+        if (nuevoUsuario !== undefined && nuevoUsuario !== usuario.usuario) {
+            const usuarioExistente = await User.findOne({ usuario: nuevoUsuario });
+            if (usuarioExistente) {
+                return res.status(400).json({ mensaje: 'Nombre de usuario ya registrado' });
+            }
+            usuario.usuario = nuevoUsuario;
+        }
 
         if (email !== undefined && email !== usuario.email) {
             if (!validator.isEmail(email)) {

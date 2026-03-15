@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { verificarToken } from '../services/api';
 
 const AuthContext = createContext();
 
@@ -16,14 +17,47 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const savedAuth = localStorage.getItem('isAuthenticated');
-        const savedUser = localStorage.getItem('user');
-        
-        if (savedAuth === 'true' && savedUser) {
-            setIsAuthenticated(true);
-            setUser(JSON.parse(savedUser));
-        }
-        setLoading(false);
+        const restaurarSesion = async () => {
+            const token = localStorage.getItem('token');
+            const savedUser = localStorage.getItem('user');
+
+            if (!token) {
+                setLoading(false);
+                return;
+            }
+
+            try {
+                const respuesta = await verificarToken(token);
+                const usuario = respuesta?.usuario;
+
+                if (usuario) {
+                    const normalizado = {
+                        id: usuario.id,
+                        usuario: usuario.usuario,
+                        nombre: usuario.nombre,
+                        rol: usuario.rol,
+                        email: usuario.email,
+                    };
+
+                    setIsAuthenticated(true);
+                    setUser(normalizado);
+                    localStorage.setItem('isAuthenticated', 'true');
+                    localStorage.setItem('user', JSON.stringify(normalizado));
+                }
+            } catch {
+                if (savedUser) {
+                    localStorage.removeItem('user');
+                }
+                localStorage.removeItem('isAuthenticated');
+                localStorage.removeItem('token');
+                setIsAuthenticated(false);
+                setUser(null);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        restaurarSesion();
     }, []);
 
     const login = (userData) => {

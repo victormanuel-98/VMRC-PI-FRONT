@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { obtenerPerfilUsuario, actualizarPerfilUsuario, subirImagenPerfil } from '../services/api';
 import Breadcrumbs from '../components/Breadcrumbs';
@@ -28,12 +28,22 @@ const Profile = () => {
   const [guardando, setGuardando] = useState(false);
   const [mensaje, setMensaje] = useState({ texto: '', tipo: '' });
 
+  const userInitials = useMemo(() => {
+    const first = formData.nombre?.trim()?.charAt(0) || '';
+    const last = formData.apellidos?.trim()?.charAt(0) || '';
+    return `${first}${last}`.toUpperCase() || 'FF';
+  }, [formData.nombre, formData.apellidos]);
+
   useEffect(() => {
     cargarPerfil();
   }, []);
 
   const cargarPerfil = async () => {
     try {
+      if (!user?.id) {
+        throw new Error('Sesión inválida. Vuelve a iniciar sesión.');
+      }
+
       const token = localStorage.getItem('token');
       const respuesta = await obtenerPerfilUsuario(user.id, token);
       
@@ -141,6 +151,24 @@ const Profile = () => {
         throw new Error(respuesta.mensaje || 'Error al actualizar el perfil');
       }
 
+      if (respuesta?.usuario) {
+        const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+        const updatedUser = {
+          ...currentUser,
+          id: respuesta.usuario.id,
+          usuario: respuesta.usuario.usuario,
+          nombre: respuesta.usuario.nombre,
+          rol: respuesta.usuario.rol,
+          email: respuesta.usuario.email,
+        };
+
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+      }
+
+      if (fotoUrl) {
+        localStorage.setItem('userAvatar', fotoUrl);
+      }
+
       setFormData(prev => ({
         ...prev,
         contrasenaActual: '',
@@ -177,165 +205,186 @@ const Profile = () => {
     <div className="profile-page">
       <Breadcrumbs items={breadcrumbItems} />
       <div className="profile-container">
-        <h1 className="profile-title">Mi perfil</h1>
+        <section className="profile-hero">
+          <div className="profile-hero-left">
+            <div className="profile-avatar large-avatar">
+              <img src={previewImage} alt="Avatar" />
+              <span className="profile-avatar-initials">{userInitials}</span>
+            </div>
+            <input
+              type="file"
+              id="image-upload"
+              accept="image/*"
+              onChange={handleImageChange}
+              style={{ display: 'none' }}
+            />
+            <button
+              type="button"
+              className="change-image-btn"
+              onClick={() => document.getElementById('image-upload').click()}
+              disabled={guardando}
+            >
+              Cambiar imagen
+            </button>
+          </div>
+
+          <div className="profile-hero-right">
+            <span className="profile-kicker">Perfil FitFood</span>
+            <h1 className="profile-title">{formData.nombre || 'Mi perfil'}</h1>
+            <p className="profile-subtitle">
+              Mantén tus datos actualizados para personalizar mejor tus recetas y recomendaciones.
+            </p>
+            <p className="profile-user-label">@{formData.usuario || 'fitfood'}</p>
+          </div>
+        </section>
         
         <form onSubmit={handleSubmit} className="profile-form">
-          <div className="profile-content">
-            <div className="profile-left">
-              <div className="profile-avatar">
-                <img src={previewImage} alt="Avatar" />
-              </div>
-              <input
-                type="file"
-                id="image-upload"
-                accept="image/*"
-                onChange={handleImageChange}
-                style={{ display: 'none' }}
-              />
-              <button
-                type="button"
-                className="change-image-btn"
-                onClick={() => document.getElementById('image-upload').click()}
-                disabled={guardando}
-              >
-                Cambiar imagen
-              </button>
-            </div>
+          <div className="profile-content modern-profile-layout">
+            <div className="profile-right profile-main-form">
+              <section className="profile-form-panel">
+                <h3 className="profile-panel-title">Datos personales</h3>
 
-            <div className="profile-right">
-              <div className="form-row">
-                <label htmlFor="nombre">Nombre:</label>
-                <input
-                  type="text"
-                  id="nombre"
-                  name="nombre"
-                  value={formData.nombre}
-                  onChange={handleChange}
-                  required
-                  disabled={guardando}
-                />
-              </div>
-
-              <div className="form-row">
-                <label htmlFor="apellidos">Apellidos:</label>
-                <input
-                  type="text"
-                  id="apellidos"
-                  name="apellidos"
-                  value={formData.apellidos}
-                  onChange={handleChange}
-                  required
-                  disabled={guardando}
-                />
-              </div>
-
-              <div className="form-row">
-                <label htmlFor="usuario">Usuario:</label>
-                <input
-                  type="text"
-                  id="usuario"
-                  name="usuario"
-                  value={formData.usuario}
-                  onChange={handleChange}
-                  required
-                  disabled={guardando}
-                />
-              </div>
-
-              <div className="form-row">
-                <label htmlFor="email">Correo:</label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  disabled={guardando}
-                />
-              </div>
-
-              <div className="form-row">
-                <label htmlFor="telefono">Teléfono:</label>
-                <input
-                  type="tel"
-                  id="telefono"
-                  name="telefono"
-                  value={formData.telefono}
-                  onChange={handleChange}
-                  placeholder="Opcional"
-                  disabled={guardando}
-                />
-              </div>
-
-              <div className="form-row notifications-row">
-                <label>Notificaciones:</label>
-                <div className="checkbox-group">
-                  <label className="checkbox-label">
+                <div className="profile-field-grid">
+                  <div className="profile-field">
+                    <label htmlFor="nombre">Nombre</label>
                     <input
-                      type="radio"
-                      name="notificaciones"
-                      checked={formData.notificaciones === true}
-                      onChange={() => setFormData(prev => ({ ...prev, notificaciones: true }))}
+                      type="text"
+                      id="nombre"
+                      name="nombre"
+                      value={formData.nombre}
+                      onChange={handleChange}
+                      required
                       disabled={guardando}
                     />
-                    Sí
-                  </label>
-                  <label className="checkbox-label">
+                  </div>
+
+                  <div className="profile-field">
+                    <label htmlFor="apellidos">Apellidos</label>
                     <input
-                      type="radio"
-                      name="notificaciones"
-                      checked={formData.notificaciones === false}
-                      onChange={() => setFormData(prev => ({ ...prev, notificaciones: false }))}
+                      type="text"
+                      id="apellidos"
+                      name="apellidos"
+                      value={formData.apellidos}
+                      onChange={handleChange}
+                      required
                       disabled={guardando}
                     />
-                    No
-                  </label>
+                  </div>
                 </div>
-              </div>
 
-              <hr style={{ margin: '20px 0', border: '1px solid #eee' }} />
-              
-              <h3 style={{ marginBottom: '15px', color: '#333' }}>Cambiar contraseña (opcional)</h3>
-              
-              <div className="form-row">
-                <label htmlFor="contrasenaActual">Contraseña actual:</label>
-                <input
-                  type="password"
-                  id="contrasenaActual"
-                  name="contrasenaActual"
-                  value={formData.contrasenaActual}
-                  onChange={handleChange}
-                  placeholder="Requerida si cambias la contraseña"
-                  disabled={guardando}
-                />
-              </div>
+                <div className="profile-field-grid">
+                  <div className="profile-field">
+                    <label htmlFor="usuario">Usuario</label>
+                    <input
+                      type="text"
+                      id="usuario"
+                      name="usuario"
+                      value={formData.usuario}
+                      onChange={handleChange}
+                      required
+                      disabled={guardando}
+                    />
+                  </div>
 
-              <div className="form-row">
-                <label htmlFor="contrasenaNueva">Nueva contraseña:</label>
-                <input
-                  type="password"
-                  id="contrasenaNueva"
-                  name="contrasenaNueva"
-                  value={formData.contrasenaNueva}
-                  onChange={handleChange}
-                  placeholder="Mínimo 8 caracteres"
-                  disabled={guardando}
-                />
-              </div>
+                  <div className="profile-field">
+                    <label htmlFor="telefono">Teléfono</label>
+                    <input
+                      type="tel"
+                      id="telefono"
+                      name="telefono"
+                      value={formData.telefono}
+                      onChange={handleChange}
+                      placeholder="Opcional"
+                      disabled={guardando}
+                    />
+                  </div>
+                </div>
 
-              <div className="form-row">
-                <label htmlFor="confirmarContrasena">Confirmar contraseña:</label>
-                <input
-                  type="password"
-                  id="confirmarContrasena"
-                  name="confirmarContrasena"
-                  value={formData.confirmarContrasena}
-                  onChange={handleChange}
-                  placeholder="Repite la nueva contraseña"
-                  disabled={guardando}
-                />
-              </div>
+                <div className="profile-field">
+                  <label htmlFor="email">Correo</label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    disabled={guardando}
+                  />
+                </div>
+
+                <div className="profile-toggle-row">
+                  <span>Notificaciones</span>
+                  <div className="checkbox-group">
+                    <label className="checkbox-label">
+                      <input
+                        type="radio"
+                        name="notificaciones"
+                        checked={formData.notificaciones === true}
+                        onChange={() => setFormData(prev => ({ ...prev, notificaciones: true }))}
+                        disabled={guardando}
+                      />
+                      Sí
+                    </label>
+                    <label className="checkbox-label">
+                      <input
+                        type="radio"
+                        name="notificaciones"
+                        checked={formData.notificaciones === false}
+                        onChange={() => setFormData(prev => ({ ...prev, notificaciones: false }))}
+                        disabled={guardando}
+                      />
+                      No
+                    </label>
+                  </div>
+                </div>
+              </section>
+
+              <section className="profile-form-panel">
+                <h3 className="profile-panel-title">Seguridad de la cuenta</h3>
+                <p className="profile-panel-note">Rellena estos campos solo si deseas cambiar tu contraseña.</p>
+
+                <div className="profile-field">
+                  <label htmlFor="contrasenaActual">Contraseña actual</label>
+                  <input
+                    type="password"
+                    id="contrasenaActual"
+                    name="contrasenaActual"
+                    value={formData.contrasenaActual}
+                    onChange={handleChange}
+                    placeholder="Requerida si cambias la contraseña"
+                    disabled={guardando}
+                  />
+                </div>
+
+                <div className="profile-field-grid">
+                  <div className="profile-field">
+                    <label htmlFor="contrasenaNueva">Nueva contraseña</label>
+                    <input
+                      type="password"
+                      id="contrasenaNueva"
+                      name="contrasenaNueva"
+                      value={formData.contrasenaNueva}
+                      onChange={handleChange}
+                      placeholder="Mínimo 8 caracteres"
+                      disabled={guardando}
+                    />
+                  </div>
+
+                  <div className="profile-field">
+                    <label htmlFor="confirmarContrasena">Confirmar contraseña</label>
+                    <input
+                      type="password"
+                      id="confirmarContrasena"
+                      name="confirmarContrasena"
+                      value={formData.confirmarContrasena}
+                      onChange={handleChange}
+                      placeholder="Repite la nueva contraseña"
+                      disabled={guardando}
+                    />
+                  </div>
+                </div>
+              </section>
             </div>
           </div>
 

@@ -1,21 +1,45 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Breadcrumbs from '../components/Breadcrumbs';
 import { enviarMensaje } from '../services/api';
+import { useAuth } from '../context/AuthContext';
+
+const contactHighlights = [
+    { label: 'Tiempo medio de respuesta', value: '< 24h' },
+    { label: 'Usuarios atendidos', value: '+12.000' },
+    { label: 'Satisfacción soporte', value: '4.9/5' }
+];
+
+const faqs = [
+    {
+        question: '¿Cuánto tardáis en responder?',
+        answer: 'Normalmente respondemos en menos de 24 horas laborables.'
+    },
+    {
+        question: '¿Puedo sugerir nuevas funciones?',
+        answer: 'Sí, nos encantan las sugerencias para mejorar FitFood.'
+    },
+    {
+        question: '¿Qué incluir en una incidencia?',
+        answer: 'Describe el problema y, si puedes, añade pasos para reproducirlo.'
+    }
+];
 
 const Contact = () => {
+    const { user } = useAuth();
     const breadcrumbItems = [
         { label: 'Inicio', path: '/inicio' },
         { label: 'Contacto', path: '/contacto' }
     ];
     const [formData, setFormData] = useState({
-        nombre: '',
-        email: '',
+        nombre: user?.nombre || '',
+        email: user?.email || '',
         asunto: '',
         contenido: ''
     });
 
     const [enviado, setEnviado] = useState(false);
+    const [enviando, setEnviando] = useState(false);
+    const [error, setError] = useState('');
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -27,24 +51,28 @@ const Contact = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError('');
+        setEnviando(true);
 
         try {
-            const respuesta = await enviarMensaje(formData);
+            const respuesta = await enviarMensaje(formData, localStorage.getItem('token'));
 
             if (respuesta.id) {
                 setEnviado(true);
                 setTimeout(() => {
                     setEnviado(false);
                     setFormData({
-                        nombre: '',
-                        email: '',
+                        nombre: user?.nombre || '',
+                        email: user?.email || '',
                         asunto: '',
                         contenido: ''
                     });
                 }, 3000);
             }
-        } catch (error) {
-            alert('Error al enviar el mensaje. Inténtalo de nuevo.');
+        } catch {
+            setError('Error al enviar el mensaje. Inténtalo de nuevo.');
+        } finally {
+            setEnviando(false);
         }
     };
 
@@ -52,13 +80,35 @@ const Contact = () => {
         <div className="contact-page">
             <Breadcrumbs items={breadcrumbItems} />
             <div className="contact-container">
-                <div className="contact-header">
-                    <h1 className="contact-title">Contáctanos</h1>
-                    <p className="contact-subtitle">¿Tienes alguna pregunta? Estamos aquí para ayudarte</p>
+                <div className="contact-hero">
+                    <div className="contact-hero-content">
+                        <span className="contact-kicker">Soporte FitFood</span>
+                        <h1 className="contact-title">Contáctanos</h1>
+                        <p className="contact-subtitle">
+                            Cuéntanos qué necesitas y te ayudamos a resolverlo rápido.
+                            Queremos que tu experiencia en FitFood sea excelente.
+                        </p>
+
+                        <div className="contact-highlight-list">
+                            {contactHighlights.map((item) => (
+                                <article key={item.label} className="contact-highlight-card">
+                                    <span>{item.label}</span>
+                                    <strong>{item.value}</strong>
+                                </article>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="contact-hero-image">
+                        <img src="/images/header.png" alt="Equipo de soporte FitFood" />
+                    </div>
                 </div>
 
                 <div className="contact-content">
                     <div className="contact-form-section">
+                        <h2 className="contact-section-title">Envíanos un mensaje</h2>
+                        <p className="contact-section-text">Te responderemos con la mayor brevedad posible.</p>
+
                         <form className="contact-form" onSubmit={handleSubmit}>
                             <div className="form-group">
                                 <label htmlFor="nombre">Nombre completo</label>
@@ -112,9 +162,11 @@ const Contact = () => {
                                 ></textarea>
                             </div>
 
-                            <button type="submit" className="submit-button">
-                                Enviar mensaje
+                            <button type="submit" className="submit-button" disabled={enviando}>
+                                {enviando ? 'Enviando...' : 'Enviar mensaje'}
                             </button>
+
+                            {error && <div className="error-message">{error}</div>}
 
                             {enviado && (
                                 <div className="success-message">
@@ -125,6 +177,11 @@ const Contact = () => {
                     </div>
 
                     <div className="contact-info-section">
+                        <div className="contact-info-intro">
+                            <h3>También puedes escribirnos por otras vías</h3>
+                            <p>Escoge el canal que prefieras y nos pondremos en contacto contigo.</p>
+                        </div>
+
                         <div className="info-card">
                             <div className="info-icon">
                                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -169,6 +226,18 @@ const Contact = () => {
                             <h3>Horario</h3>
                             <p>Lunes - Viernes: 9:00 - 18:00</p>
                             <p>Sábados: 10:00 - 14:00</p>
+                        </div>
+
+                        <div className="contact-faq-card">
+                            <h3>Preguntas frecuentes</h3>
+                            <div className="contact-faq-list">
+                                {faqs.map((faq) => (
+                                    <article key={faq.question} className="contact-faq-item">
+                                        <strong>{faq.question}</strong>
+                                        <p>{faq.answer}</p>
+                                    </article>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>

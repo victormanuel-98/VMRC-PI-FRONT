@@ -68,6 +68,24 @@ router.post('/', autenticar, crearReceta);
 router.get('/', obtenerRecetas);
 /**
  * @swagger
+ * /api/recetas/usuario/{usuarioId}:
+ *   get:
+ *     summary: Obtener recetas de un usuario
+ *     tags: [Recetas]
+ *     parameters:
+ *       - in: path
+ *         name: usuarioId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID del usuario
+ *     responses:
+ *       200:
+ *         description: Lista de recetas del usuario
+ */
+router.get('/usuario/:usuarioId', obtenerRecetasUsuario);
+/**
+ * @swagger
  * /api/recetas/{id}:
  *   get:
  *     summary: Obtener una receta por ID
@@ -86,24 +104,6 @@ router.get('/', obtenerRecetas);
  *         description: Receta no encontrada
  */
 router.get('/:id', obtenerReceta);
-/**
- * @swagger
- * /api/recetas/usuario/{usuarioId}:
- *   get:
- *     summary: Obtener recetas de un usuario
- *     tags: [Recetas]
- *     parameters:
- *       - in: path
- *         name: usuarioId
- *         schema:
- *           type: string
- *         required: true
- *         description: ID del usuario
- *     responses:
- *       200:
- *         description: Lista de recetas del usuario
- */
-router.get('/usuario/:usuarioId', obtenerRecetasUsuario);
 /**
  * @swagger
  * /api/recetas/{id}:

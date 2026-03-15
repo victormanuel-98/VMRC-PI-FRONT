@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Breadcrumbs from '../components/Breadcrumbs';
-import { obtenerReceta, agregarFavorito, eliminarFavorito, crearValoracion } from '../services/api';
+import {
+    obtenerReceta,
+    agregarFavorito,
+    eliminarFavorito,
+    crearValoracion,
+    obtenerFavoritos,
+} from '../services/api';
 
 const RecipeDetail = () => {
     const { id } = useParams();
@@ -19,25 +25,41 @@ const RecipeDetail = () => {
         { label: 'Detalle de Receta', path: `/receta/${id}` }
     ];
 
-    useEffect(() => {
-        const cargarReceta = async () => {
-            try {
-                setLoading(true);
-                const respuesta = await obtenerReceta(id);
-                
-                if (respuesta.receta) {
-                    setReceta(respuesta.receta);
-                } else {
-                    setError('Receta no encontrada');
-                }
-            } catch {
-                setError('Error al cargar la receta');
-            } finally {
-                setLoading(false);
-            }
-        };
+    const cargarReceta = async () => {
+        try {
+            setLoading(true);
+            const respuesta = await obtenerReceta(id);
 
+            if (respuesta.receta) {
+                setReceta(respuesta.receta);
+                setError('');
+            } else {
+                setError('Receta no encontrada');
+            }
+        } catch {
+            setError('Error al cargar la receta');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const cargarEstadoFavorito = async () => {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        try {
+            const favoritos = await obtenerFavoritos(token);
+            if (Array.isArray(favoritos)) {
+                setIsFavorite(favoritos.some((fav) => fav?.receta?._id === id));
+            }
+        } catch {
+            setIsFavorite(false);
+        }
+    };
+
+    useEffect(() => {
         cargarReceta();
+        cargarEstadoFavorito();
     }, [id]);
 
     const handleToggleFavorite = async () => {
@@ -77,7 +99,7 @@ const RecipeDetail = () => {
             alert('Valoración enviada');
             setRating(0);
             setComment('');
-            cargarReceta();
+            await cargarReceta();
         } catch {
             alert('Error al enviar valoración');
         }
@@ -125,7 +147,7 @@ const RecipeDetail = () => {
                             className={`favorite-btn ${isFavorite ? 'active' : ''}`}
                             onClick={handleToggleFavorite}
                         >
-                            {isFavorite ? '' : ''} {isFavorite ? 'En favoritos' : 'Agregar a favoritos'}
+                            {isFavorite ? 'En favoritos' : 'Agregar a favoritos'}
                         </button>
                     </div>
 
@@ -179,7 +201,7 @@ const RecipeDetail = () => {
                         <ul className="ingredients-list">
                             {receta.ingredientes && receta.ingredientes.length > 0 ? (
                                 receta.ingredientes.map((item, index) => (
-                                    <li key={index}>
+                                    <li key={`${item?.ingrediente?._id || 'ingrediente'}-${index}`}>
                                         <span className="ingredient-amount">{item.cantidad}g</span>
                                         <span className="ingredient-name">
                                             {item.ingrediente?.nombre || 'Ingrediente'}
@@ -210,6 +232,7 @@ const RecipeDetail = () => {
                                 {[1, 2, 3, 4, 5].map((star) => (
                                     <button
                                         key={star}
+                                        type="button"
                                         className={`star-btn ${rating >= star ? 'active' : ''}`}
                                         onClick={() => setRating(star)}
                                     >
