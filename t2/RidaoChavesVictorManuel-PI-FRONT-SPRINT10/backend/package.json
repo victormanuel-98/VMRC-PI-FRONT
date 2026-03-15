@@ -1,0 +1,45 @@
+{
+  "name": "fitfood-backend",
+  "version": "1.0.0",
+  "description": "Backend para FitFood - Aplicación de control nutricional",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "seed:ingredientes": "node src/seed/ingredients.js",
+    "seed:recetas": "node src/seed/recipes.js",
+    "seed:usuarios": "node src/seed/users.js",
+    "seed:todo": "npm run seed:usuarios && npm run seed:ingredientes && npm run seed:recetas",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage"
+  },
+  "keywords": [
+    "fitfood",
+    "recetas",
+    "nutrición",
+    "dieta"
+  ],
+  "author": "Victor Manuel Ridao Chaves",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cloudinary": "^1.41.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-async-errors": "^3.1.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^7.5.0",
+    "multer": "^1.4.5-lts.1",
+    "validator": "^13.11.0"
+  },
+  "devDependencies": {
+    "jest": "^30.2.0",
+    "mongodb-memory-server": "^11.0.1",
+    "nodemon": "^3.0.1",
+    "supertest": "^7.2.2",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
+  }
+}
