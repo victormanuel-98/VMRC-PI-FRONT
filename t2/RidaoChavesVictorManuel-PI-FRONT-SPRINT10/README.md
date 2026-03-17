@@ -20,51 +20,33 @@ FitFood es una aplicación web fullstack para crear, gestionar y descubrir recet
 
 ## Recursos Visuales (Imágenes y GIF)
 
-Los recursos visuales del frontend se almacenan en `frontend/public/images/`.
+Los recursos visuales para documentación de esta versión se almacenan en frontend/public/imagesReadme/.
 
-### Recorrido completo (GIF)
-
-![Recorrido completo FitFood](frontend/public/images/recorrido.gif)
-
-### Evidencias visuales de interfaz
+### Capturas incluidas
 
 #### Home
 
-![Portada principal](frontend/public/images/PortadaMainPage.png)
-![Página inicio](frontend/public/images/Pagina%20inicio.png)
+![Home](frontend/public/imagesReadme/home.png)
+![Home cards](frontend/public/imagesReadme/homeCards.png)
 
-#### Autenticación
+#### Login
 
-![Login](frontend/public/images/Login%20de%20la%20web.png)
-![Registro](frontend/public/images/Registrar%20nuevo%20usuario.png)
-![Confirmación de usuario](frontend/public/images/Confirmacion%20de%20usuario%20creado.png)
-![Error autenticación](frontend/public/images/Error%20de%20autenticacion.png)
-![Recuperar contraseña](frontend/public/images/Recuperar%20contraseña.png)
+![Login](frontend/public/imagesReadme/login.png)
 
-#### Perfil y ajustes
+#### Crear receta
 
-![Perfil de usuario](frontend/public/images/Perfil%20de%20usuario.png)
-![Perfil guardando cambios](frontend/public/images/Perfil%20de%20usuario%20guardar%20cambios.png)
-![Perfil cambios guardados](frontend/public/images/Perfil%20de%20usuario%20cambios%20guardados.png)
-![Ajustes generales](frontend/public/images/Ajustes%20generales.png)
+![Create recipe](frontend/public/imagesReadme/createRecipe.png)
 
-#### Recetas y exploración
+### Próximas implementaciones
 
-![Mis recetas](frontend/public/images/Mis%20recetas.png)
-![Mis recetas favoritas](frontend/public/images/Mis%20recetas%20favoritas.png)
-![Búsqueda de alimentos](frontend/public/images/Búsqueda%20de%20alimentos.png)
-![Información de alimento](frontend/public/images/Información%20de%20alimento.png)
-![Ver platos por alimento](frontend/public/images/Ver%20platos%20con%20alimento%20escogido.png)
+- Cambio y mejora general del frontend.
+- Añadir asistente de IA en más flujos de la aplicación.
+- Verificación de sesión por correo electrónico.
+- Verificación de sesión por SMS si el usuario añade número de teléfono.
 
-#### Errores y estados
+### Recorrido completo (GIF)
 
-![Página no encontrada](frontend/public/images/Pagina%20no%20encontrada.png)
-
-### Espacios para futuras capturas/GIF
-
-- [ ] Demo modo oscuro en inglés: `frontend/public/images/TODO-dark-en.png`
-- [ ] Flujo asistente IA: `frontend/public/images/TODO-ai-assistant-flow.gif`
-- [ ] Flujo creación de receta end-to-end: `frontend/public/images/TODO-create-recipe-flow.gif`
+![Recorrido FitFood](frontend/public/imagesReadme/recorrdioFitFood.gif)
 
 ---
 
