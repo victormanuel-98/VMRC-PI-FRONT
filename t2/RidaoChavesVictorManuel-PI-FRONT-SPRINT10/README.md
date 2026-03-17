@@ -1,4 +1,6 @@
-# FitFood - Aplicación de Recetas Saludables
+# FitFood - Tu Web de Recetas Saludables
+
+---
 
 ## Descripción del Proyecto
 
@@ -12,37 +14,46 @@ FitFood es una aplicación web fullstack para crear, gestionar y descubrir recet
 - Traducción ampliada para modo inglés en cabecera, autenticación, ajustes, contacto, colecciones y exploración de platos.
 - Ajustes generales renovados: selección por chips (sin radios con puntos).
 - Sección "Recetas creadas recientemente" adaptada para dark mode.
-- Actualización visual de "Contáctanos" con imagen de mayor calidad.
-- Internacionalización extendida en: Asistente IA, Mis Recetas, Crear Receta, Detalle de Receta, Perfil, páginas 403 y 404.
 - Asistente personal actualizado con icono/logo visible en botón flotante y cabecera del panel.
 
 ---
 
-## Recursos Visuales (Imágenes y GIF)
+## Recursos Visuales
 
-Los recursos visuales para documentación de esta versión se almacenan en frontend/public/imagesReadme/.
-
-### Capturas incluidas
+---
 
 #### Home
 
 ![Home](frontend/public/imagesReadme/home.png)
+
+---
+
 ![Home cards](frontend/public/imagesReadme/homeCards.png)
+
+---
 
 #### Login
 
+---
+
 ![Login](frontend/public/imagesReadme/login.png)
+
+---
 
 #### Crear receta
 
+---
+
 ![Create recipe](frontend/public/imagesReadme/createRecipe.png)
+
+---
 
 ### Próximas implementaciones
 
-- Cambio y mejora general del frontend.
-- Añadir asistente de IA en más flujos de la aplicación.
-- Verificación de sesión por correo electrónico.
-- Verificación de sesión por SMS si el usuario añade número de teléfono.
+- Cambio y mejora general del frontend (posible cambio de paleta de colores para modo claro y oscuro) así como interfaz.
+- Añadir asistente de IA en más flujos de la aplicación (posiblemente).
+- Verificación de sesión por correo electrónico (mediante WebSockets).
+- Verificación de sesión por SMS si el usuario añade número de teléfono (aún no implementado a la hora de crear el usuario).
 
 ### Recorrido completo (GIF)
 
@@ -348,6 +359,7 @@ flowchart TD
 - Reduce frustración del usuario con feedback visual
 
 ### 5. **Estructura de Carpetas**
+
 ```
 src/
 ├── components/        # Componentes reutilizables
@@ -580,40 +592,3 @@ npm test -- --coverage
 - [ ] Notificaciones push
 - [ ] PWA (Progressive Web App)
 - [ ] Internacionalización (i18n)
-
----
-
-## Capturas de Pantalla
-
-### Login
-![Login](./frontend/public/images/login.png)
-
-### Home
-![Home](./frontend/public/images/home.png)
-
-### Perfil de Usuario
-![Profile](./frontend/public/images/profile.png)
-
----
-
-## Notas de Desarrollo
-
-### Sprint 9 - Cambios Principales
-
-1. **CreateRecipe.jsx**: Reescrito completamente con búsqueda de ingredientes
-2. **RecipeDetail.jsx**: Integración completa con API usando `useParams()`
-3. **Profile.jsx**: Sistema completo de edición de perfil con cambio de contraseña
-4. **BreakfastRecipes.jsx**: Migrado de datos estáticos a API con filtros
-5. **App.jsx**: Ruta actualizada de `/receta` a `/receta/:id`
-6. **api.js**: Agregadas funciones `obtenerPerfilUsuario` y `actualizarPerfilUsuario`
-7. **userController.js**: Nuevos endpoints `obtenerPerfil` y `actualizarPerfil`
-8. **userRoutes.js**: Nuevo archivo de rutas para usuarios
-9. **styles.css**: Agregados estilos para mensajes de error/éxito y badges nutricionales
-
-### Mejoras de UX Implementadas
-- Loading states en todas las páginas con datos dinámicos
-- Error states con botón de reintentar
-- Empty states con call-to-action
-- Mensajes de feedback para operaciones CRUD
-- Validaciones en tiempo real
-- Imágenes con fallback SVG
