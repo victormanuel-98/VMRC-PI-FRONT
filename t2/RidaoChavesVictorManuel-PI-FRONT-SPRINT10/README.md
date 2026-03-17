@@ -6,6 +6,68 @@ FitFood es una aplicación web fullstack para crear, gestionar y descubrir recet
 
 ---
 
+## Novedades UI (Sprint 10)
+
+- Modo oscuro refinado con paleta azul suave y mejor contraste.
+- Traducción ampliada para modo inglés en cabecera, autenticación, ajustes, contacto, colecciones y exploración de platos.
+- Ajustes generales renovados: selección por chips (sin radios con puntos).
+- Sección "Recetas creadas recientemente" adaptada para dark mode.
+- Actualización visual de "Contáctanos" con imagen de mayor calidad.
+- Internacionalización extendida en: Asistente IA, Mis Recetas, Crear Receta, Detalle de Receta, Perfil, páginas 403 y 404.
+- Asistente personal actualizado con icono/logo visible en botón flotante y cabecera del panel.
+
+---
+
+## Recursos Visuales (Imágenes y GIF)
+
+Los recursos visuales del frontend se almacenan en `frontend/public/images/`.
+
+### Recorrido completo (GIF)
+
+![Recorrido completo FitFood](frontend/public/images/recorrido.gif)
+
+### Evidencias visuales de interfaz
+
+#### Home
+
+![Portada principal](frontend/public/images/PortadaMainPage.png)
+![Página inicio](frontend/public/images/Pagina%20inicio.png)
+
+#### Autenticación
+
+![Login](frontend/public/images/Login%20de%20la%20web.png)
+![Registro](frontend/public/images/Registrar%20nuevo%20usuario.png)
+![Confirmación de usuario](frontend/public/images/Confirmacion%20de%20usuario%20creado.png)
+![Error autenticación](frontend/public/images/Error%20de%20autenticacion.png)
+![Recuperar contraseña](frontend/public/images/Recuperar%20contraseña.png)
+
+#### Perfil y ajustes
+
+![Perfil de usuario](frontend/public/images/Perfil%20de%20usuario.png)
+![Perfil guardando cambios](frontend/public/images/Perfil%20de%20usuario%20guardar%20cambios.png)
+![Perfil cambios guardados](frontend/public/images/Perfil%20de%20usuario%20cambios%20guardados.png)
+![Ajustes generales](frontend/public/images/Ajustes%20generales.png)
+
+#### Recetas y exploración
+
+![Mis recetas](frontend/public/images/Mis%20recetas.png)
+![Mis recetas favoritas](frontend/public/images/Mis%20recetas%20favoritas.png)
+![Búsqueda de alimentos](frontend/public/images/Búsqueda%20de%20alimentos.png)
+![Información de alimento](frontend/public/images/Información%20de%20alimento.png)
+![Ver platos por alimento](frontend/public/images/Ver%20platos%20con%20alimento%20escogido.png)
+
+#### Errores y estados
+
+![Página no encontrada](frontend/public/images/Pagina%20no%20encontrada.png)
+
+### Espacios para futuras capturas/GIF
+
+- [ ] Demo modo oscuro en inglés: `frontend/public/images/TODO-dark-en.png`
+- [ ] Flujo asistente IA: `frontend/public/images/TODO-ai-assistant-flow.gif`
+- [ ] Flujo creación de receta end-to-end: `frontend/public/images/TODO-create-recipe-flow.gif`
+
+---
+
 ## Características Implementadas
 
 ### Integración Backend y Funcionalidades Avanzadas

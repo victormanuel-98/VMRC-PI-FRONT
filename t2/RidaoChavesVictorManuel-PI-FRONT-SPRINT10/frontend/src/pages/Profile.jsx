@@ -1,13 +1,27 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useUiPreferences } from '../context/UiPreferencesContext';
 import { obtenerPerfilUsuario, actualizarPerfilUsuario, subirImagenPerfil } from '../services/api';
 import Breadcrumbs from '../components/Breadcrumbs';
 
+const DEFAULT_AVATAR = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22256%22 height=%22256%22 viewBox=%220 0 256 256%22%3E%3Crect width=%22256%22 height=%22256%22 rx=%2232%22 fill=%22%23d9e7ef%22/%3E%3Ccircle cx=%22128%22 cy=%2296%22 r=%2248%22 fill=%22%2380a2b2%22/%3E%3Cpath d=%22M48 220c12-40 46-64 80-64s68 24 80 64%22 fill=%22none%22 stroke=%22%2380a2b2%22 stroke-width=%2224%22 stroke-linecap=%22round%22/%3E%3C/svg%3E';
+
+const normalizeAvatarUrl = (value) => {
+  if (typeof value !== 'string') return '';
+  let cleaned = value.trim();
+  if ((cleaned.startsWith('"') && cleaned.endsWith('"')) || (cleaned.startsWith("'") && cleaned.endsWith("'"))) {
+    cleaned = cleaned.slice(1, -1);
+  }
+  if (!cleaned || cleaned.toLowerCase() === 'null' || cleaned.toLowerCase() === 'undefined') return '';
+  return cleaned;
+};
+
 const Profile = () => {
+  const { t } = useUiPreferences();
   const { user } = useAuth();
   const breadcrumbItems = [
-    { label: 'Inicio', path: '/inicio' },
-    { label: 'Mi Perfil', path: '/perfil' }
+    { label: t('nav.home', 'Inicio'), path: '/inicio' },
+    { label: t('nav.profile', 'Mi Perfil'), path: '/perfil' }
   ];
   
   const [formData, setFormData] = useState({
@@ -22,8 +36,9 @@ const Profile = () => {
     confirmarContrasena: ''
   });
 
-  const [previewImage, setPreviewImage] = useState('/default-avatar.png');
+  const [previewImage, setPreviewImage] = useState(DEFAULT_AVATAR);
   const [imagenBase64, setImagenBase64] = useState(null);
+  const [avatarFailed, setAvatarFailed] = useState(false);
   const [loading, setLoading] = useState(true);
   const [guardando, setGuardando] = useState(false);
   const [mensaje, setMensaje] = useState({ texto: '', tipo: '' });
@@ -34,6 +49,10 @@ const Profile = () => {
     return `${first}${last}`.toUpperCase() || 'FF';
   }, [formData.nombre, formData.apellidos]);
 
+  const avatarSrc = useMemo(() => {
+    return normalizeAvatarUrl(previewImage) || DEFAULT_AVATAR;
+  }, [previewImage]);
+
   useEffect(() => {
     cargarPerfil();
   }, []);
@@ -41,7 +60,7 @@ const Profile = () => {
   const cargarPerfil = async () => {
     try {
       if (!user?.id) {
-        throw new Error('Sesión inválida. Vuelve a iniciar sesión.');
+        throw new Error(t('profile.invalidSession', 'Sesión inválida. Vuelve a iniciar sesión.'));
       }
 
       const token = localStorage.getItem('token');
@@ -49,6 +68,9 @@ const Profile = () => {
       
       if (respuesta.usuario) {
         const { nombre, apellidos, usuario, email, telefono, foto, notificaciones } = respuesta.usuario;
+        const savedAvatar = normalizeAvatarUrl(localStorage.getItem('userAvatar'));
+        const apiAvatar = normalizeAvatarUrl(foto);
+
         setFormData({
           nombre: nombre || '',
           apellidos: apellidos || '',
@@ -61,13 +83,12 @@ const Profile = () => {
           confirmarContrasena: ''
         });
         
-        if (foto) {
-          setPreviewImage(foto);
-        }
+        setPreviewImage(apiAvatar || savedAvatar || DEFAULT_AVATAR);
+        setAvatarFailed(false);
       }
     } catch (error) {
       console.error('Error al cargar perfil:', error);
-      setMensaje({ texto: 'Error al cargar el perfil', tipo: 'error' });
+      setMensaje({ texto: t('profile.loadError', 'Error al cargar el perfil'), tipo: 'error' });
     } finally {
       setLoading(false);
     }
@@ -85,7 +106,7 @@ const Profile = () => {
     const file = e.target.files[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        setMensaje({ texto: 'La imagen no puede superar los 5MB', tipo: 'error' });
+        setMensaje({ texto: t('profile.imageSizeError', 'La imagen no puede superar los 5MB'), tipo: 'error' });
         return;
       }
 
@@ -93,9 +114,19 @@ const Profile = () => {
       reader.onloadend = () => {
         setPreviewImage(reader.result);
         setImagenBase64(reader.result);
+        setAvatarFailed(false);
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleAvatarError = () => {
+    if (avatarSrc !== DEFAULT_AVATAR) {
+      setPreviewImage(DEFAULT_AVATAR);
+      setAvatarFailed(false);
+      return;
+    }
+    setAvatarFailed(true);
   };
 
   const handleSubmit = async (e) => {
@@ -110,20 +141,20 @@ const Profile = () => {
       if (imagenBase64) {
         const respuestaImagen = await subirImagenPerfil(imagenBase64, token);
         if (respuestaImagen.error) {
-          throw new Error(respuestaImagen.mensaje || 'Error al subir la imagen');
+          throw new Error(respuestaImagen.mensaje || t('createRecipe.errorImageUpload', 'Error al subir la imagen'));
         }
         fotoUrl = respuestaImagen.url;
       }
 
       if (formData.contrasenaNueva) {
         if (formData.contrasenaNueva !== formData.confirmarContrasena) {
-          throw new Error('Las contraseñas no coinciden');
+          throw new Error(t('profile.passwordMismatch', 'Las contraseñas no coinciden'));
         }
         if (!formData.contrasenaActual) {
-          throw new Error('Debes ingresar tu contraseña actual para cambiarla');
+          throw new Error(t('profile.currentPasswordRequired', 'Debes ingresar tu contraseña actual para cambiarla'));
         }
         if (formData.contrasenaNueva.length < 8) {
-          throw new Error('La nueva contraseña debe tener al menos 8 caracteres');
+          throw new Error(t('profile.passwordLengthError', 'La nueva contraseña debe tener al menos 8 caracteres'));
         }
       }
 
@@ -148,7 +179,7 @@ const Profile = () => {
       const respuesta = await actualizarPerfilUsuario(user.id, datosActualizacion, token);
 
       if (respuesta.error) {
-        throw new Error(respuesta.mensaje || 'Error al actualizar el perfil');
+        throw new Error(respuesta.mensaje || t('profile.updateError', 'Error al actualizar el perfil'));
       }
 
       if (respuesta?.usuario) {
@@ -166,7 +197,12 @@ const Profile = () => {
       }
 
       if (fotoUrl) {
-        localStorage.setItem('userAvatar', fotoUrl);
+        const normalizedFotoUrl = normalizeAvatarUrl(fotoUrl);
+        if (normalizedFotoUrl) {
+          localStorage.setItem('userAvatar', normalizedFotoUrl);
+          setPreviewImage(normalizedFotoUrl);
+          setAvatarFailed(false);
+        }
       }
 
       setFormData(prev => ({
@@ -177,14 +213,14 @@ const Profile = () => {
       }));
 
       setImagenBase64(null);
-      setMensaje({ texto: 'Perfil actualizado correctamente', tipo: 'success' });
+      setMensaje({ texto: t('profile.updated', 'Perfil actualizado correctamente'), tipo: 'success' });
       
       setTimeout(() => setMensaje({ texto: '', tipo: '' }), 3000);
 
     } catch (error) {
       console.error('Error al actualizar perfil:', error);
       setMensaje({ 
-        texto: error.message || 'Error al actualizar el perfil', 
+        texto: error.message || t('profile.updateError', 'Error al actualizar el perfil'), 
         tipo: 'error' 
       });
     } finally {
@@ -196,7 +232,7 @@ const Profile = () => {
     return (
       <div className="profile-page">
         <Breadcrumbs items={breadcrumbItems} />
-        <div className="loading">Cargando perfil...</div>
+        <div className="loading">{t('profile.loading', 'Cargando perfil...')}</div>
       </div>
     );
   }
@@ -208,7 +244,9 @@ const Profile = () => {
         <section className="profile-hero">
           <div className="profile-hero-left">
             <div className="profile-avatar large-avatar">
-              <img src={previewImage} alt="Avatar" />
+              {!avatarFailed && (
+                <img key={avatarSrc} src={avatarSrc} alt="Avatar" onError={handleAvatarError} />
+              )}
               <span className="profile-avatar-initials">{userInitials}</span>
             </div>
             <input
@@ -224,15 +262,15 @@ const Profile = () => {
               onClick={() => document.getElementById('image-upload').click()}
               disabled={guardando}
             >
-              Cambiar imagen
+              {t('profile.changeImage', 'Cambiar imagen')}
             </button>
           </div>
 
           <div className="profile-hero-right">
-            <span className="profile-kicker">Perfil FitFood</span>
-            <h1 className="profile-title">{formData.nombre || 'Mi perfil'}</h1>
+            <span className="profile-kicker">{t('profile.kicker', 'Perfil FitFood')}</span>
+            <h1 className="profile-title">{formData.nombre || t('nav.profile', 'Mi perfil')}</h1>
             <p className="profile-subtitle">
-              Mantén tus datos actualizados para personalizar mejor tus recetas y recomendaciones.
+              {t('profile.subtitle', 'Mantén tus datos actualizados para personalizar mejor tus recetas y recomendaciones.')}
             </p>
             <p className="profile-user-label">@{formData.usuario || 'fitfood'}</p>
           </div>
@@ -242,11 +280,11 @@ const Profile = () => {
           <div className="profile-content modern-profile-layout">
             <div className="profile-right profile-main-form">
               <section className="profile-form-panel">
-                <h3 className="profile-panel-title">Datos personales</h3>
+                <h3 className="profile-panel-title">{t('profile.personalData', 'Datos personales')}</h3>
 
                 <div className="profile-field-grid">
                   <div className="profile-field">
-                    <label htmlFor="nombre">Nombre</label>
+                    <label htmlFor="nombre">{t('register.firstName', 'Nombre')}</label>
                     <input
                       type="text"
                       id="nombre"
@@ -259,7 +297,7 @@ const Profile = () => {
                   </div>
 
                   <div className="profile-field">
-                    <label htmlFor="apellidos">Apellidos</label>
+                    <label htmlFor="apellidos">{t('register.lastName', 'Apellidos')}</label>
                     <input
                       type="text"
                       id="apellidos"
@@ -274,7 +312,7 @@ const Profile = () => {
 
                 <div className="profile-field-grid">
                   <div className="profile-field">
-                    <label htmlFor="usuario">Usuario</label>
+                    <label htmlFor="usuario">{t('register.username', 'Usuario')}</label>
                     <input
                       type="text"
                       id="usuario"
@@ -287,21 +325,21 @@ const Profile = () => {
                   </div>
 
                   <div className="profile-field">
-                    <label htmlFor="telefono">Teléfono</label>
+                    <label htmlFor="telefono">{t('register.phone', 'Teléfono')}</label>
                     <input
                       type="tel"
                       id="telefono"
                       name="telefono"
                       value={formData.telefono}
                       onChange={handleChange}
-                      placeholder="Opcional"
+                      placeholder={t('profile.optional', 'Opcional')}
                       disabled={guardando}
                     />
                   </div>
                 </div>
 
                 <div className="profile-field">
-                  <label htmlFor="email">Correo</label>
+                  <label htmlFor="email">{t('register.email', 'Correo')}</label>
                   <input
                     type="email"
                     id="email"
@@ -314,7 +352,7 @@ const Profile = () => {
                 </div>
 
                 <div className="profile-toggle-row">
-                  <span>Notificaciones</span>
+                  <span>{t('profile.notifications', 'Notificaciones')}</span>
                   <div className="checkbox-group">
                     <label className="checkbox-label">
                       <input
@@ -324,7 +362,7 @@ const Profile = () => {
                         onChange={() => setFormData(prev => ({ ...prev, notificaciones: true }))}
                         disabled={guardando}
                       />
-                      Sí
+                      {t('common.yes', 'Sí')}
                     </label>
                     <label className="checkbox-label">
                       <input
@@ -334,52 +372,52 @@ const Profile = () => {
                         onChange={() => setFormData(prev => ({ ...prev, notificaciones: false }))}
                         disabled={guardando}
                       />
-                      No
+                      {t('common.no', 'No')}
                     </label>
                   </div>
                 </div>
               </section>
 
               <section className="profile-form-panel">
-                <h3 className="profile-panel-title">Seguridad de la cuenta</h3>
-                <p className="profile-panel-note">Rellena estos campos solo si deseas cambiar tu contraseña.</p>
+                <h3 className="profile-panel-title">{t('profile.securityTitle', 'Seguridad de la cuenta')}</h3>
+                <p className="profile-panel-note">{t('profile.securityNote', 'Rellena estos campos solo si deseas cambiar tu contraseña.')}</p>
 
                 <div className="profile-field">
-                  <label htmlFor="contrasenaActual">Contraseña actual</label>
+                  <label htmlFor="contrasenaActual">{t('profile.currentPassword', 'Contraseña actual')}</label>
                   <input
                     type="password"
                     id="contrasenaActual"
                     name="contrasenaActual"
                     value={formData.contrasenaActual}
                     onChange={handleChange}
-                    placeholder="Requerida si cambias la contraseña"
+                    placeholder={t('profile.currentPasswordPlaceholder', 'Requerida si cambias la contraseña')}
                     disabled={guardando}
                   />
                 </div>
 
                 <div className="profile-field-grid">
                   <div className="profile-field">
-                    <label htmlFor="contrasenaNueva">Nueva contraseña</label>
+                    <label htmlFor="contrasenaNueva">{t('profile.newPassword', 'Nueva contraseña')}</label>
                     <input
                       type="password"
                       id="contrasenaNueva"
                       name="contrasenaNueva"
                       value={formData.contrasenaNueva}
                       onChange={handleChange}
-                      placeholder="Mínimo 8 caracteres"
+                      placeholder={t('profile.newPasswordPlaceholder', 'Mínimo 8 caracteres')}
                       disabled={guardando}
                     />
                   </div>
 
                   <div className="profile-field">
-                    <label htmlFor="confirmarContrasena">Confirmar contraseña</label>
+                    <label htmlFor="confirmarContrasena">{t('profile.confirmPassword', 'Confirmar contraseña')}</label>
                     <input
                       type="password"
                       id="confirmarContrasena"
                       name="confirmarContrasena"
                       value={formData.confirmarContrasena}
                       onChange={handleChange}
-                      placeholder="Repite la nueva contraseña"
+                      placeholder={t('profile.confirmPasswordPlaceholder', 'Repite la nueva contraseña')}
                       disabled={guardando}
                     />
                   </div>
@@ -389,7 +427,7 @@ const Profile = () => {
           </div>
 
           <button type="submit" className="save-btn" disabled={guardando}>
-            {guardando ? 'Guardando...' : 'Guardar cambios'}
+            {guardando ? t('common.saving', 'Guardando...') : t('profile.saveChanges', 'Guardar cambios')}
           </button>
 
           {mensaje.texto && (

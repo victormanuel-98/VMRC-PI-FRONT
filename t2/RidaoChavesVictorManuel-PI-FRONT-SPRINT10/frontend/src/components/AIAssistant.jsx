@@ -1,13 +1,21 @@
 import React, { useState } from 'react';
 import { enviarConsultaIA } from '../services/api';
+import { useUiPreferences } from '../context/UiPreferencesContext';
+
+const createMessage = (role, content) => ({
+    id: `${role}-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+    role,
+    content
+});
 
 const AIAssistant = () => {
+    const { t } = useUiPreferences();
     const [abierto, setAbierto] = useState(false);
     const [entrada, setEntrada] = useState('');
     const [cargando, setCargando] = useState(false);
     const [error, setError] = useState('');
     const [mensajes, setMensajes] = useState([
-        { role: 'assistant', content: 'Hola, soy tu asistente FitFood. ¿En qué te ayudo hoy?' },
+        { id: 'assistant-welcome', role: 'assistant', content: t('assistant.welcome', 'Hola, soy tu asistente FitFood. ¿En qué te ayudo hoy?') },
     ]);
 
     const enviar = async () => {
@@ -16,12 +24,12 @@ const AIAssistant = () => {
 
         const token = localStorage.getItem('token');
         if (!token) {
-            setError('Necesitas iniciar sesión para usar el asistente.');
+            setError(t('assistant.errorLoginRequired', 'Necesitas iniciar sesión para usar el asistente.'));
             return;
         }
 
         setError('');
-        const nuevosMensajes = [...mensajes, { role: 'user', content: texto }];
+        const nuevosMensajes = [...mensajes, createMessage('user', texto)];
         setMensajes(nuevosMensajes);
         setEntrada('');
         setCargando(true);
@@ -33,12 +41,13 @@ const AIAssistant = () => {
             );
 
             if (respuesta?.respuesta) {
-                setMensajes((prev) => [...prev, { role: 'assistant', content: respuesta.respuesta }]);
+                setMensajes((prev) => [...prev, createMessage('assistant', respuesta.respuesta)]);
             } else {
-                setError(respuesta?.mensaje || 'No se pudo obtener respuesta de la IA.');
+                setError(respuesta?.mensaje || t('assistant.errorNoResponse', 'No se pudo obtener respuesta de la IA.'));
             }
         } catch (e) {
-            setError('No se pudo conectar con la IA.');
+            console.error('AI assistant connection error:', e);
+            setError(t('assistant.errorConnect', 'No se pudo conectar con la IA.'));
         } finally {
             setCargando(false);
         }
@@ -56,26 +65,29 @@ const AIAssistant = () => {
             <button
                 className="ai-toggle"
                 onClick={() => setAbierto((prev) => !prev)}
-                aria-label="Abrir asistente IA"
+                aria-label={t('assistant.openAria', 'Abrir asistente IA')}
             >
-                {abierto ? '' : ''}
+                <span className="ai-toggle-icon" aria-hidden="true">🤖</span>
             </button>
 
             {abierto && (
                 <div className="ai-panel">
                     <div className="ai-header">
-                        <div className="ai-title">Asistente FitFood</div>
-                        <div className="ai-subtitle">Basado en Qwen3 (LM Studio)</div>
+                        <div className="ai-title-row">
+                            <span className="ai-logo" aria-hidden="true">🤖</span>
+                            <div className="ai-title">{t('assistant.title', 'Asistente FitFood')}</div>
+                        </div>
+                        <div className="ai-subtitle">{t('assistant.subtitle', 'Basado en Qwen3 (LM Studio)')}</div>
                     </div>
 
                     <div className="ai-messages">
-                        {mensajes.map((m, idx) => (
-                            <div key={idx} className={`ai-message ${m.role}`}>
+                        {mensajes.map((m) => (
+                            <div key={m.id} className={`ai-message ${m.role}`}>
                                 {m.content}
                             </div>
                         ))}
                         {cargando && (
-                            <div className="ai-message assistant">Pensando...</div>
+                            <div className="ai-message assistant">{t('assistant.thinking', 'Pensando...')}</div>
                         )}
                     </div>
 
@@ -86,18 +98,18 @@ const AIAssistant = () => {
                             value={entrada}
                             onChange={(e) => setEntrada(e.target.value)}
                             onKeyDown={manejarKeyDown}
-                            placeholder="Escribe tu pregunta..."
+                            placeholder={t('assistant.placeholder', 'Escribe tu pregunta...')}
                             rows={2}
                         />
                         <button onClick={enviar} disabled={cargando || !entrada.trim()}>
-                            Enviar
+                            {t('assistant.send', 'Enviar')}
                         </button>
                     </div>
 
                     <div className="ai-hints">
-                        <button onClick={() => setEntrada('Sugiéreme un desayuno saludable y rápido.')}>Desayuno rápido</button>
-                        <button onClick={() => setEntrada('¿Cómo equilibrar proteínas, grasas y carbohidratos?')}>Macronutrientes</button>
-                        <button onClick={() => setEntrada('Dame ideas para una cena ligera.')}>Cena ligera</button>
+                        <button onClick={() => setEntrada(t('assistant.promptBreakfast', 'Sugiéreme un desayuno saludable y rápido.'))}>{t('assistant.hintBreakfast', 'Desayuno rápido')}</button>
+                        <button onClick={() => setEntrada(t('assistant.promptMacros', '¿Cómo equilibrar proteínas, grasas y carbohidratos?'))}>{t('assistant.hintMacros', 'Macronutrientes')}</button>
+                        <button onClick={() => setEntrada(t('assistant.promptDinner', 'Dame ideas para una cena ligera.'))}>{t('assistant.hintDinner', 'Cena ligera')}</button>
                     </div>
                 </div>
             )}

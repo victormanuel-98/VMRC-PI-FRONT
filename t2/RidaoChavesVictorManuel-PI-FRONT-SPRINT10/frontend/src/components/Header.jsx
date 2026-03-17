@@ -3,22 +3,73 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useUiPreferences } from '../context/UiPreferencesContext';
 
+const DEFAULT_AVATAR = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22128%22 height=%22128%22 viewBox=%220 0 128 128%22%3E%3Crect width=%22128%22 height=%22128%22 rx=%2218%22 fill=%22%23d9e7ef%22/%3E%3Ccircle cx=%2264%22 cy=%2248%22 r=%2224%22 fill=%22%2380a2b2%22/%3E%3Cpath d=%22M24 112c8-20 24-34 40-34s32 14 40 34%22 fill=%22none%22 stroke=%22%2380a2b2%22 stroke-width=%2212%22 stroke-linecap=%22round%22/%3E%3C/svg%3E';
+
+const normalizeAvatarUrl = (value) => {
+    if (typeof value !== 'string') return '';
+    let cleaned = value.trim();
+    if ((cleaned.startsWith('"') && cleaned.endsWith('"')) || (cleaned.startsWith("'") && cleaned.endsWith("'"))) {
+        cleaned = cleaned.slice(1, -1);
+    }
+    if (!cleaned || cleaned.toLowerCase() === 'null' || cleaned.toLowerCase() === 'undefined') return '';
+    return cleaned;
+};
+
 const Header = () => {
     const navigate = useNavigate();
     const { logout, user } = useAuth();
     const { preferences, toggleLanguage, toggleTheme, t } = useUiPreferences();
     const [userAvatar, setUserAvatar] = useState(null);
+    const [avatarFailed, setAvatarFailed] = useState(false);
     const [userDropdownOpen, setUserDropdownOpen] = useState(false);
     const [settingsDropdownOpen, setSettingsDropdownOpen] = useState(false);
     const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
     const [search, setSearch] = useState('');
 
+    const [quickPrivacy, setQuickPrivacy] = useState('publico');
+
     useEffect(() => {
-        const savedAvatar = localStorage.getItem('userAvatar');
+        const savedAvatar = normalizeAvatarUrl(localStorage.getItem('userAvatar'));
         if (savedAvatar) {
             setUserAvatar(savedAvatar);
+            setAvatarFailed(false);
+        }
+
+        try {
+            const localSettings = JSON.parse(localStorage.getItem('userSettings') || '{}');
+            if (localSettings?.comentarios) {
+                setQuickPrivacy(localSettings.comentarios);
+            }
+        } catch {
+            setQuickPrivacy('publico');
         }
     }, []);
+
+    const headerAvatarSrc = normalizeAvatarUrl(userAvatar) || DEFAULT_AVATAR;
+
+    const handleAvatarError = () => {
+        if (headerAvatarSrc !== DEFAULT_AVATAR) {
+            setUserAvatar(DEFAULT_AVATAR);
+            setAvatarFailed(false);
+            return;
+        }
+        setAvatarFailed(true);
+    };
+
+    const toggleQuickPrivacy = () => {
+        const next = quickPrivacy === 'publico' ? 'privado' : 'publico';
+        setQuickPrivacy(next);
+
+        try {
+            const localSettings = JSON.parse(localStorage.getItem('userSettings') || '{}');
+            localStorage.setItem('userSettings', JSON.stringify({
+                ...localSettings,
+                comentarios: next
+            }));
+        } catch {
+            localStorage.setItem('userSettings', JSON.stringify({ comentarios: next }));
+        }
+    };
 
     const handleLogout = () => {
         logout();
@@ -65,29 +116,24 @@ const Header = () => {
                         </button>
                         <div className={`user-dropdown settings-dropdown ${settingsDropdownOpen ? 'show' : ''}`}>
                             <button className="dropdown-item" onClick={toggleTheme}>
-                                {t('header.darkMode', 'Modo oscuro')}: {preferences.theme === 'dark' ? 'ON' : 'OFF'}
+                                {t('header.appearance', 'Apariencia')}: {preferences.theme === 'dark' ? t('header.dark', 'Oscuro') : t('header.light', 'Claro')}
                             </button>
                             <button className="dropdown-item" onClick={toggleLanguage}>
-                                {t('header.english', 'Inglés')}: {preferences.language === 'en' ? 'ON' : 'OFF'}
+                                {t('header.languageShort', 'Idioma')}: {preferences.language === 'en' ? 'EN' : 'ES'}
                             </button>
                             <button
                                 className="dropdown-item"
-                                onClick={() => {
-                                    setSettingsDropdownOpen(false);
-                                    navigate('/ajustes');
-                                }}
+                                onClick={toggleQuickPrivacy}
                             >
-                                {t('header.settingsPage', 'Abrir ajustes')}
+                                {t('header.privacy', 'Privacidad')}: {quickPrivacy === 'privado' ? t('header.private', 'Privado') : t('header.public', 'Público')}
                             </button>
                         </div>
                     </div>
 
                     <div className="user-dropdown-container" onMouseEnter={() => setUserDropdownOpen(true)} onMouseLeave={() => setUserDropdownOpen(false)}>
                         <button className="icon-button user-icon" aria-label={t('header.profile', 'Mi perfil')}>
-                            {userAvatar ? (
-                                <img src={userAvatar} alt="Perfil" className="user-avatar" />
-                            ) : (
-                                <img src="/default-avatar.png" alt="Perfil" className="user-avatar" />
+                            {!avatarFailed && (
+                                <img key={headerAvatarSrc} src={headerAvatarSrc} alt={t('header.profile', 'Mi perfil')} className="user-avatar" onError={handleAvatarError} />
                             )}
                             <span className="header-user-name">{user?.nombre || user?.usuario || 'FitFood'}</span>
                         </button>
@@ -108,14 +154,14 @@ const Header = () => {
                 {showLogoutConfirm && (
                     <div className="logout-modal-overlay" onClick={() => setShowLogoutConfirm(false)}>
                         <div className="logout-modal" onClick={(e) => e.stopPropagation()}>
-                            <h2>Cerrar sesión</h2>
-                            <p>¿Estás seguro de que deseas cerrar la sesión?</p>
+                            <h2>{t('header.logoutTitle', 'Cerrar sesión')}</h2>
+                            <p>{t('header.logoutConfirm', '¿Estás seguro de que deseas cerrar la sesión?')}</p>
                             <div className="modal-buttons">
                                 <button className="modal-btn cancel-btn" onClick={() => setShowLogoutConfirm(false)}>
-                                    No
+                                    {t('common.no', 'No')}
                                 </button>
                                 <button className="modal-btn confirm-btn" onClick={handleLogout}>
-                                    Sí
+                                    {t('common.yes', 'Sí')}
                                 </button>
                             </div>
                         </div>

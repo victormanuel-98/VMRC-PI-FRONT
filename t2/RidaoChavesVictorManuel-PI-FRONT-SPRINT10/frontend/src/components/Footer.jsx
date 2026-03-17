@@ -1,6 +1,8 @@
 import React from 'react';
+import { useUiPreferences } from '../context/UiPreferencesContext';
 
 const Footer = () => {
+    const { t } = useUiPreferences();
     return (
         <footer className="footer">
             <div className="footer-content">
@@ -12,25 +14,25 @@ const Footer = () => {
                     <div className="footer-column">
                         <h4>FitFood</h4>
                         <ul>
-                            <li><a href="#">Biblioteca de recetas</a></li>
-                            <li><a href="#">Configuración de cookies</a></li>
+                            <li><a href="#">{t('footer.recipeLibrary', 'Biblioteca de recetas')}</a></li>
+                            <li><a href="#">{t('footer.cookiesConfig', 'Configuración de cookies')}</a></li>
                         </ul>
                     </div>
 
                     <div className="footer-column">
-                        <h4>Nuestra empresa</h4>
+                        <h4>{t('footer.company', 'Nuestra empresa')}</h4>
                         <ul>
-                            <li><a href="#">Prensa</a></li>
+                            <li><a href="#">{t('footer.press', 'Prensa')}</a></li>
                             <li><a href="#">FitFoodGroup</a></li>
                         </ul>
                     </div>
 
                     <div className="footer-column">
-                        <h4>Colabora con nosotros</h4>
+                        <h4>{t('footer.collaborate', 'Colabora con nosotros')}</h4>
                         <ul>
-                            <li><a href="#">Colaboradores</a></li>
+                            <li><a href="#">{t('footer.partners', 'Colaboradores')}</a></li>
                             <li><a href="#">Influencers</a></li>
-                            <li><a href="#">Afiliados</a></li>
+                            <li><a href="#">{t('footer.affiliates', 'Afiliados')}</a></li>
                         </ul>
                     </div>
                 </div>
@@ -38,10 +40,10 @@ const Footer = () => {
 
             <div className="footer-bottom">
                 <div className="footer-links">
-                    <a href="#">Términos y condiciones</a>
-                    <a href="#">Política de privacidad</a>
-                    <a href="#">Política de cookies</a>
-                    <a href="#">Declaración de accesibilidad</a>
+                    <a href="#">{t('footer.terms', 'Términos y condiciones')}</a>
+                    <a href="#">{t('footer.privacy', 'Política de privacidad')}</a>
+                    <a href="#">{t('footer.cookies', 'Política de cookies')}</a>
+                    <a href="#">{t('footer.accessibility', 'Declaración de accesibilidad')}</a>
                 </div>
 
                 <div className="footer-copyright">

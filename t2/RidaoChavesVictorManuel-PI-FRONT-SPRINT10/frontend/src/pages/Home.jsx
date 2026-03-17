@@ -116,7 +116,7 @@ const fallbackCreatedRecipes = [
 
 const Home = () => {
   const navigate = useNavigate();
-  const { t } = useUiPreferences();
+  const { t, preferences } = useUiPreferences();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [featuredRecipes, setFeaturedRecipes] = useState([]);
 
@@ -137,24 +137,36 @@ const Home = () => {
 
   const featuredSlides = useMemo(() => {
     if (featuredRecipes.length === 0) {
-      return fallbackSlides;
+      return fallbackSlides.map((slide) => ({
+        ...slide,
+        buttonLabel:
+          slide.id === 'fallback-1'
+            ? t('home.fallback.breakfast', 'Ver desayunos')
+            : slide.id === 'fallback-2'
+              ? t('home.fallback.discover', 'Descubrir ideas')
+              : slide.id === 'fallback-3'
+                ? t('home.fallback.meals', 'Ver comidas')
+                : slide.id === 'fallback-4'
+                  ? t('home.fallback.dinners', 'Explorar cenas')
+                  : t('home.fallback.more', 'Ver más recetas')
+      }));
     }
 
     return featuredRecipes.slice(0, 8).map((receta, index) => ({
       id: receta._id,
       title: receta.nombre,
-      description: receta.descripcionCorta || 'Descubre una receta saludable preparada por la comunidad FitFood.',
+      description: receta.descripcionCorta || t('home.slide.defaultDesc', 'Descubre una receta saludable preparada por la comunidad FitFood.'),
       image: receta.imagen || carouselImages[index % carouselImages.length],
-      tag: receta.categoria || 'Receta FitFood',
+      tag: receta.categoria || t('home.slide.defaultTag', 'Receta FitFood'),
       meta: [
         `${Math.round(receta.calorias || 0)} kcal`,
-        receta.dificultad || 'Media',
-        new Date(receta.createdAt).toLocaleDateString('es-ES')
+        receta.dificultad || t('breakfast.medium', 'Media'),
+        new Date(receta.createdAt).toLocaleDateString(preferences.language === 'en' ? 'en-US' : 'es-ES')
       ],
-      buttonLabel: 'Ver receta',
+      buttonLabel: t('breakfast.viewRecipe', 'Ver receta'),
       path: `/receta/${receta._id}`
     }));
-  }, [featuredRecipes]);
+  }, [featuredRecipes, preferences.language, t]);
 
   const createdRecipes = useMemo(() => {
     if (!featuredRecipes.length) {
@@ -185,11 +197,11 @@ const Home = () => {
       return undefined;
     }
 
-    const interval = window.setInterval(() => {
+    const interval = globalThis.setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % featuredSlides.length);
     }, 5500);
 
-    return () => window.clearInterval(interval);
+    return () => globalThis.clearInterval(interval);
   }, [featuredSlides.length]);
 
   const activeSlide = featuredSlides[currentIndex] || fallbackSlides[0];
@@ -233,10 +245,10 @@ const Home = () => {
 
             <div className="hero-actions">
               <button className="recipe-button" onClick={() => navigate('/platos/explorar')}>
-                Explorar platos
+                {t('explorer.title', 'Explorar platos')}
               </button>
               <button className="recipe-button" onClick={() => navigate('/recetas/crear')}>
-                Crear receta
+                {t('nav.createRecipe', 'Crear receta')}
               </button>
             </div>
           </div>
@@ -253,19 +265,19 @@ const Home = () => {
       <div className="featured-section">
         <div className="featured-header">
           <div>
-            <span className="featured-kicker">Inspiración de la semana</span>
-            <h2 className="section-title featured-title">Recetas destacadas</h2>
+            <span className="featured-kicker">{t('home.featured.kicker', 'Inspiración de la semana')}</span>
+            <h2 className="section-title featured-title">{t('home.featured.title', 'Recetas destacadas')}</h2>
             <p className="featured-description">
-              Descubre recetas saludables con un formato visual integrado con el estilo de FitFood.
+              {t('home.featured.description', 'Descubre recetas saludables con un formato visual integrado con el estilo de FitFood.')}
             </p>
           </div>
 
           {featuredSlides.length > 1 && (
             <div className="featured-controls">
-              <button className="carousel-btn" onClick={handlePrev} aria-label="Anterior">
+              <button className="carousel-btn" onClick={handlePrev} aria-label={t('home.carousel.prev', 'Anterior')}>
                 <span className="carousel-icon">‹</span>
               </button>
-              <button className="carousel-btn" onClick={handleNext} aria-label="Siguiente">
+              <button className="carousel-btn" onClick={handleNext} aria-label={t('home.carousel.next', 'Siguiente')}>
                 <span className="carousel-icon">›</span>
               </button>
             </div>
@@ -314,14 +326,14 @@ const Home = () => {
         </div>
 
         {featuredSlides.length > 1 && (
-          <div className="showcase-dots" aria-label="Navegación del carrusel">
+          <div className="showcase-dots" aria-label={t('home.carousel.nav', 'Navegación del carrusel')}>
             {featuredSlides.map((slide, index) => (
               <button
                 key={slide.id}
                 type="button"
                 className={`showcase-dot ${index === currentIndex ? 'active' : ''}`}
                 onClick={() => setCurrentIndex(index)}
-                aria-label={`Ir a ${slide.title}`}
+                aria-label={`${t('home.carousel.goTo', 'Ir a')} ${slide.title}`}
               />
             ))}
           </div>
@@ -330,9 +342,9 @@ const Home = () => {
 
       <section className="home-created-section">
         <div className="home-created-header">
-          <h2 className="section-title home-created-title">Recetas creadas recientemente</h2>
+          <h2 className="section-title home-created-title">{t('home.recent.title', 'Recetas creadas recientemente')}</h2>
           <button className="recipe-button" onClick={() => navigate('/mis-recetas')}>
-            Ver mis recetas
+            {t('home.recent.myRecipes', 'Ver mis recetas')}
           </button>
         </div>
 
@@ -352,29 +364,29 @@ const Home = () => {
 
               <div className="recipe-info-container">
                 <p className="recipe-field">
-                  <span className="field-label">Nombre:</span>
+                  <span className="field-label">{t('home.recent.name', 'Nombre')}:</span>
                   <span className="field-value">{receta.nombre}</span>
                 </p>
                 <p className="recipe-field">
-                  <span className="field-label">Descripción:</span>
-                  <span className="field-value">{receta.descripcionCorta || 'Sin descripción'}</span>
+                  <span className="field-label">{t('home.recent.description', 'Descripción')}:</span>
+                  <span className="field-value">{receta.descripcionCorta || t('breakfast.noShortDescription', 'Sin descripción')}</span>
                 </p>
                 <p className="recipe-field">
-                  <span className="field-label">Calorías:</span>
+                  <span className="field-label">{t('home.recent.calories', 'Calorías')}:</span>
                   <span className="field-value">{Math.round(receta.calorias || 0)} kcal</span>
                 </p>
                 <p className="recipe-field">
-                  <span className="field-label">Dificultad:</span>
-                  <span className="field-value">{receta.dificultad || 'Media'}</span>
+                  <span className="field-label">{t('home.recent.difficulty', 'Dificultad')}:</span>
+                  <span className="field-value">{receta.dificultad || t('breakfast.medium', 'Media')}</span>
                 </p>
                 <p className="recipe-field">
-                  <span className="field-label">Fecha de creación:</span>
-                  <span className="field-value">{new Date(receta.createdAt).toLocaleDateString('es-ES')}</span>
+                  <span className="field-label">{t('home.recent.date', 'Fecha de creación')}:</span>
+                  <span className="field-value">{new Date(receta.createdAt).toLocaleDateString(preferences.language === 'en' ? 'en-US' : 'es-ES')}</span>
                 </p>
               </div>
 
               <button className="recipe-button" onClick={() => handleOpenCreatedRecipe(receta)}>
-                {receta.isFallback ? 'Ver categoría' : 'Ver receta'}
+                {receta.isFallback ? t('home.recent.viewCategory', 'Ver categoría') : t('breakfast.viewRecipe', 'Ver receta')}
               </button>
             </article>
           ))}

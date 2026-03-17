@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useUiPreferences } from '../context/UiPreferencesContext';
 import { registro } from '../services/api';
 
 const Register = () => {
@@ -20,6 +21,7 @@ const Register = () => {
   const [errors, setErrors] = useState({});
   const [submitMessage, setSubmitMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const { preferences, toggleTheme, toggleLanguage, t } = useUiPreferences();
 
   const requiredFields = ['nombre', 'apellidos', 'usuario', 'contrasena', 'email'];
 
@@ -101,28 +103,42 @@ const Register = () => {
       const respuesta = await registro(datosRegistro);
       
       if (respuesta.token) {
-        setSubmitMessage('¡Cuenta creada correctamente! Redirigiendo a login...');
+        setSubmitMessage(t('register.success', '¡Cuenta creada correctamente! Redirigiendo a login...'));
         
         setTimeout(() => {
           navigate('/login');
         }, 2000);
       } else {
-        setErrors({ general: respuesta.mensaje || 'Error al crear la cuenta' });
+        setErrors({ general: respuesta.mensaje || t('register.errorCreate', 'Error al crear la cuenta') });
       }
     } catch (err) {
-      setErrors({ general: err?.message || 'Error de conexión. Verifica que el servidor esté activo.' });
+      setErrors({ general: err?.message || t('register.errorConnection', 'Error de conexión. Verifica que el servidor esté activo.') });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="register-page">
-      <div className="register-container">
+    <div className="register-page auth-page">
+      <div className="auth-quick-controls">
+        <button type="button" onClick={toggleTheme} className="auth-quick-btn">
+          {preferences.theme === 'dark' ? t('auth.themeLight', 'Modo claro') : t('auth.themeDark', 'Modo oscuro')}
+        </button>
+        <button type="button" onClick={toggleLanguage} className="auth-quick-btn">
+          {preferences.language === 'en' ? t('auth.spanish', 'Español') : t('auth.english', 'English')}
+        </button>
+      </div>
+      <div className="register-container auth-register-shell">
+        <div className="auth-heading register-heading">
+          <span className="auth-badge">FitFood</span>
+          <h1 className="welcome-title">{t('register.title', 'Crear cuenta')}</h1>
+          <p className="welcome-subtitle">{t('register.subtitle', 'Accede a tus recetas, planes y ajustes personalizados.')}</p>
+        </div>
+
         <form onSubmit={handleSubmit} className="register-form">
           <div className="register-content">
-            <div className="register-left">
-              <h3 className="register-section-title">Foto de perfil</h3>
+            <div className="register-left register-left-modern">
+              <h3 className="register-section-title">{t('register.photo', 'Foto de perfil')}</h3>
               <div className="register-avatar">
                 <img src={previewImage} alt="Avatar" />
               </div>
@@ -138,63 +154,65 @@ const Register = () => {
                 className="upload-image-btn"
                 onClick={() => document.getElementById('image-upload').click()}
               >
-                Subir desde el dispositivo
+                {t('register.uploadImage', 'Subir imagen')}
               </button>
+
+              <img src="/images/Registrar nuevo usuario.png" alt={t('register.title', 'Crear cuenta')} className="register-side-image" />
             </div>
 
             <div className="register-right">
-              <h3 className="register-section-title">Datos personales</h3>
+              <h3 className="register-section-title">{t('register.personalData', 'Datos personales')}</h3>
               
               <div className="form-row-register">
-                <label>Nombre {requiredFields.includes('nombre') && <span className="required-icon">▶</span>}</label>
+                <label>{t('register.firstName', 'Nombre')} {requiredFields.includes('nombre') && <span className="required-icon">▶</span>}</label>
                 <input
                   type="text"
                   name="nombre"
                   value={formData.nombre}
                   onChange={handleChange}
                   className={errors.nombre ? 'input-error' : ''}
-                  placeholder="Tu nombre"
+                  placeholder={t('contact.placeholderName', 'Tu nombre')}
                 />
               </div>
 
               <div className="form-row-register">
-                <label>Apellidos {requiredFields.includes('apellidos') && <span className="required-icon">▶</span>}</label>
+                <label>{t('register.lastName', 'Apellidos')} {requiredFields.includes('apellidos') && <span className="required-icon">▶</span>}</label>
                 <input
                   type="text"
                   name="apellidos"
                   value={formData.apellidos}
                   onChange={handleChange}
                   className={errors.apellidos ? 'input-error' : ''}
-                  placeholder="Tus apellidos"
+                  placeholder={t('register.placeholderLastName', 'Tus apellidos')}
                 />
               </div>
 
               <div className="form-row-register">
-                <label>Nombre de usuario {requiredFields.includes('usuario') && <span className="required-icon">▶</span>}</label>
+                <label>{t('register.username', 'Nombre de usuario')} {requiredFields.includes('usuario') && <span className="required-icon">▶</span>}</label>
                 <input
                   type="text"
                   name="usuario"
                   value={formData.usuario}
                   onChange={handleChange}
                   className={errors.usuario ? 'input-error' : ''}
-                  placeholder="Tu nombre de usuario"
+                  placeholder={t('register.placeholderUsername', 'Tu nombre de usuario')}
                 />
               </div>
 
               <div className="form-row-register">
-                <label>Contraseña {requiredFields.includes('contrasena') && <span className="required-icon">▶</span>}</label>
+                <label>{t('register.password', 'Contraseña')} {requiredFields.includes('contrasena') && <span className="required-icon">▶</span>}</label>
                 <input
                   type="password"
                   name="contrasena"
                   value={formData.contrasena}
                   onChange={handleChange}
                   className={errors.contrasena ? 'input-error' : ''}
-                  placeholder="Mín. 8, mayúscula, número y símbolo"
+                  placeholder={t('register.placeholderPassword', 'Mín. 8, mayúscula, número y símbolo')}
                 />
               </div>
 
               <div className="form-row-register">
-                <label>Correo electrónico {requiredFields.includes('email') && <span className="required-icon">▶</span>}</label>
+                <label>{t('register.email', 'Correo electrónico')} {requiredFields.includes('email') && <span className="required-icon">▶</span>}</label>
                 <input
                   type="email"
                   name="email"
@@ -206,7 +224,7 @@ const Register = () => {
               </div>
 
               <div className="form-row-register">
-                <label>Número de teléfono <span className="optional-icon">▶</span></label>
+                <label>{t('register.phone', 'Número de teléfono')} <span className="optional-icon">▶</span></label>
                 <div className="phone-input-group">
                   <span className="phone-prefix">+34</span>
                   <input
@@ -214,13 +232,13 @@ const Register = () => {
                     name="telefono"
                     value={formData.telefono}
                     onChange={handleChange}
-                    placeholder="Tu teléfono"
+                    placeholder={t('register.placeholderPhone', 'Tu teléfono')}
                   />
                 </div>
               </div>
 
               <div className="form-row-register">
-                <label>Notificaciones al correo <span className="optional-icon">▶</span></label>
+                <label>{t('register.notifications', 'Notificaciones al correo')} <span className="optional-icon">▶</span></label>
                 <input
                   type="checkbox"
                   name="notificaciones"
@@ -231,7 +249,7 @@ const Register = () => {
               </div>
 
               <div className="form-row-register visibility-row">
-                <label>Visibilidad <span className="optional-icon">▶</span></label>
+                <label>{t('register.visibility', 'Visibilidad')} <span className="optional-icon">▶</span></label>
                 <div className="radio-group">
                   <label className="radio-label">
                     <input
@@ -241,7 +259,7 @@ const Register = () => {
                       checked={formData.visibilidad === 'publica'}
                       onChange={handleChange}
                     />
-                    Público
+                    {t('register.public', 'Público')}
                   </label>
                   <label className="radio-label">
                     <input
@@ -251,18 +269,18 @@ const Register = () => {
                       checked={formData.visibilidad === 'privada'}
                       onChange={handleChange}
                     />
-                    Privado
+                    {t('register.private', 'Privado')}
                   </label>
                 </div>
               </div>
 
-              <p className="required-note">*Los campos con el icono '▶' son obligatorios</p>
+              <p className="required-note">{t('register.requiredNote', "*Los campos con el icono '▶' son obligatorios")}</p>
             </div>
           </div>
 
           <div className="register-button-container">
             <button type="submit" className="create-account-btn" disabled={loading}>
-              {loading ? 'Creando cuenta...' : 'Crear usuario'}
+              {loading ? t('register.submitLoading', 'Creando cuenta...') : t('register.submit', 'Crear usuario')}
             </button>
           </div>
 

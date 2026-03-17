@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useUiPreferences } from '../context/UiPreferencesContext';
 import Breadcrumbs from '../components/Breadcrumbs';
 import { subirImagenReceta, crearReceta, obtenerIngredientes } from '../services/api';
 
 const MAX_INGREDIENTS = 10;
 
 const CreateRecipe = () => {
+  const { t } = useUiPreferences();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   const breadcrumbItems = [
-    { label: 'Inicio', path: '/inicio' },
-    { label: 'Mis Recetas', path: '/recetas' },
-    { label: 'Crear Nueva Receta', path: '/recetas/crear' }
+    { label: t('nav.home', 'Inicio'), path: '/inicio' },
+    { label: t('nav.myRecipes', 'Mis Recetas'), path: '/recetas' },
+    { label: t('createRecipe.breadcrumb', 'Crear Nueva Receta'), path: '/recetas/crear' }
   ];
 
   const [form, setForm] = useState({
@@ -117,10 +119,10 @@ const CreateRecipe = () => {
           setImagenUrl(respuesta.url);
           setError('');
         } else {
-          setError('Error al subir la imagen');
+          setError(t('createRecipe.errorImageUpload', 'Error al subir la imagen'));
         }
       } catch {
-        setError('Error al procesar la imagen');
+        setError(t('createRecipe.errorImageProcess', 'Error al procesar la imagen'));
       } finally {
         setLoading(false);
       }
@@ -134,12 +136,12 @@ const CreateRecipe = () => {
 
     try {
       if (!isAuthenticated) {
-        setError('Debes iniciar sesión');
+        setError(t('createRecipe.errorLogin', 'Debes iniciar sesión'));
         return;
       }
 
       if (!form.nombre.trim()) {
-        setError('El nombre de la receta es requerido');
+        setError(t('createRecipe.errorNameRequired', 'El nombre de la receta es requerido'));
         return;
       }
 
@@ -147,11 +149,11 @@ const CreateRecipe = () => {
         .filter((ing) => ing.name.trim() && ing.quantity > 0 && ing.ingredienteId)
         .map((ing) => ({
           ingrediente: ing.ingredienteId,
-          cantidad: parseFloat(ing.quantity),
+          cantidad: Number.parseFloat(ing.quantity),
         }));
 
       if (ingredientesValidos.length === 0) {
-        setError('Agrega al menos un ingrediente válido de la lista');
+        setError(t('createRecipe.errorIngredients', 'Agrega al menos un ingrediente válido de la lista'));
         return;
       }
 
@@ -163,7 +165,7 @@ const CreateRecipe = () => {
         descripcionLarga: form.descripcionLarga,
         dificultad: form.dificultad,
         categoria: form.categoria,
-        tiempoPreparacion: parseInt(form.tiempoPreparacion) || 0,
+        tiempoPreparacion: Number.parseInt(form.tiempoPreparacion, 10) || 0,
         imagen: imagenUrl,
         ingredientes: ingredientesValidos,
       };
@@ -171,13 +173,13 @@ const CreateRecipe = () => {
       const respuesta = await crearReceta(datosReceta, localStorage.getItem('token'));
 
       if (respuesta.receta) {
-        alert('Receta creada exitosamente');
+        alert(t('createRecipe.success', 'Receta creada exitosamente'));
         navigate('/recetas');
       } else {
-        setError(respuesta.mensaje || 'Error al crear la receta');
+        setError(respuesta.mensaje || t('createRecipe.errorCreate', 'Error al crear la receta'));
       }
     } catch {
-      setError('Error al crear la receta');
+      setError(t('createRecipe.errorCreate', 'Error al crear la receta'));
     } finally {
       setLoading(false);
     }
@@ -189,46 +191,45 @@ const CreateRecipe = () => {
       <div className="create-recipe-card">
         <header className="create-header">
           <p className="create-subtitle">
-            Aquí puedes crear tu propia receta, podrás añadir una imagen con el resultado así como la lista de
-            ingredientes y mucho más...
+            {t('createRecipe.subtitle', 'Aquí puedes crear tu propia receta, podrás añadir una imagen con el resultado así como la lista de ingredientes y mucho más...')}
           </p>
         </header>
 
         {error && <div className="error-message">{error}</div>}
 
         <section className="section-block">
-          <h2 className="section-heading">DATOS</h2>
+          <h2 className="section-heading">{t('createRecipe.dataTitle', 'DATOS')}</h2>
           <div className="data-grid">
             <div className="upload-panel">
               <div className="upload-box">
-                {preview ? <img src={preview} alt="Vista previa" /> : <div className="upload-placeholder" />}
-                {loading && <p className="uploading">Subiendo imagen...</p>}
+                {preview ? <img src={preview} alt={t('createRecipe.previewAlt', 'Vista previa')} /> : <div className="upload-placeholder" />}
+                {loading && <p className="uploading">{t('createRecipe.uploading', 'Subiendo imagen...')}</p>}
               </div>
               <label className="upload-button">
-                Subir desde el dispositivo
+                {t('createRecipe.uploadFromDevice', 'Subir desde el dispositivo')}
                 <input type="file" accept="image/*" onChange={handleImageChange} disabled={loading} />
               </label>
             </div>
 
             <div className="form-panel">
               <div className="form-row">
-                <label>Nombre del plato:</label>
+                <label>{t('createRecipe.dishName', 'Nombre del plato')}:</label>
                 <input
                   type="text"
                   name="nombre"
                   value={form.nombre}
                   onChange={handleChange}
-                  placeholder="Escribir..."
+                  placeholder={t('common.write', 'Escribir...')}
                 />
               </div>
 
               <div className="form-row difficulty-row">
-                <label>Dificultad:</label>
+                <label>{t('home.recent.difficulty', 'Dificultad')}:</label>
                 <div className="difficulty-options">
                   {[
-                    { value: 'facil', label: 'Fácil' },
-                    { value: 'medio', label: 'Medio' },
-                    { value: 'dificil', label: 'Difícil' },
+                    { value: 'facil', label: t('createRecipe.easy', 'Fácil') },
+                    { value: 'medio', label: t('createRecipe.medium', 'Medio') },
+                    { value: 'dificil', label: t('createRecipe.hard', 'Difícil') },
                   ].map((opt) => (
                     <label key={opt.value} className="difficulty-option">
                       <input
@@ -245,24 +246,24 @@ const CreateRecipe = () => {
               </div>
 
               <div className="form-row">
-                <label>Categoría:</label>
+                <label>{t('createRecipe.category', 'Categoría')}:</label>
                 <select
                   name="categoria"
                   value={form.categoria}
                   onChange={handleChange}
                 >
-                  <option value="desayuno">Desayuno</option>
-                  <option value="almuerzo">Almuerzo</option>
-                  <option value="merienda">Merienda</option>
-                  <option value="cena">Cena</option>
-                  <option value="snack">Snack</option>
-                  <option value="postre">Postre</option>
-                  <option value="bebida">Bebida</option>
+                  <option value="desayuno">{t('nav.breakfast', 'Desayuno')}</option>
+                  <option value="almuerzo">{t('nav.lunch', 'Almuerzo')}</option>
+                  <option value="merienda">{t('createRecipe.snackTime', 'Merienda')}</option>
+                  <option value="cena">{t('nav.dinner', 'Cena')}</option>
+                  <option value="snack">{t('createRecipe.snack', 'Snack')}</option>
+                  <option value="postre">{t('createRecipe.dessert', 'Postre')}</option>
+                  <option value="bebida">{t('createRecipe.drink', 'Bebida')}</option>
                 </select>
               </div>
 
               <div className="form-row">
-                <label>Tiempo de preparación (minutos):</label>
+                <label>{t('createRecipe.prepTime', 'Tiempo de preparación (minutos)')}:</label>
                 <input
                   type="number"
                   name="tiempoPreparacion"
@@ -274,13 +275,13 @@ const CreateRecipe = () => {
               </div>
 
               <div className="form-row">
-                <label>Descripción corta:</label>
+                <label>{t('home.recent.description', 'Descripción')}:</label>
                 <input
                   type="text"
                   name="descripcionCorta"
                   value={form.descripcionCorta}
                   onChange={handleChange}
-                  placeholder="Escribir..."
+                  placeholder={t('common.write', 'Escribir...')}
                 />
               </div>
             </div>
@@ -288,8 +289,8 @@ const CreateRecipe = () => {
         </section>
 
         <section className="section-block">
-          <h2 className="section-heading">INGREDIENTES</h2>
-          <p className="section-note">Escribe al menos 3 letras para buscar ingredientes en la base de datos</p>
+          <h2 className="section-heading">{t('createRecipe.ingredientsTitle', 'INGREDIENTES')}</h2>
+          <p className="section-note">{t('createRecipe.ingredientsHint', 'Escribe al menos 3 letras para buscar ingredientes en la base de datos')}</p>
           <div className="ingredients-grid">
             {ingredients.map((ing) => (
               <div key={ing.id} className="ingredient-row">
@@ -298,21 +299,22 @@ const CreateRecipe = () => {
                     type="text"
                     value={ing.name}
                     onChange={(e) => handleIngredientChange(ing.id, 'name', e.target.value)}
-                    placeholder="Escribe el nombre del alimento"
+                    placeholder={t('createRecipe.ingredientPlaceholder', 'Escribe el nombre del alimento')}
                     className={ing.ingredienteId ? 'ingredient-selected' : ''}
                   />
-                  {searchingIngredient === ing.id && ingredientSuggestions.filter(s => s.rowId === ing.id).length > 0 && (
+                  {searchingIngredient === ing.id && ingredientSuggestions.some((s) => s.rowId === ing.id) && (
                     <div className="suggestions-dropdown">
                       {ingredientSuggestions
                         .filter(s => s.rowId === ing.id)
                         .map((suggestion) => (
-                          <div
+                          <button
                             key={suggestion.id}
+                            type="button"
                             className="suggestion-item"
                             onClick={() => handleSelectIngredient(ing.id, suggestion.id, suggestion.nombre)}
                           >
                             {suggestion.nombre}
-                          </div>
+                          </button>
                         ))}
                     </div>
                   )}
@@ -335,12 +337,12 @@ const CreateRecipe = () => {
         </section>
 
         <section className="section-block">
-          <h2 className="section-heading">DESCRIPCIÓN DETALLADA</h2>
+          <h2 className="section-heading">{t('createRecipe.detailedDescription', 'DESCRIPCIÓN DETALLADA')}</h2>
           <textarea
             name="descripcionLarga"
             value={form.descripcionLarga}
             onChange={handleChange}
-            placeholder="Escribe los pasos de preparación y otros detalles..."
+            placeholder={t('createRecipe.stepsPlaceholder', 'Escribe los pasos de preparación y otros detalles...')}
             rows={8}
           />
         </section>
@@ -351,10 +353,10 @@ const CreateRecipe = () => {
             onClick={handleSubmit}
             disabled={loading}
           >
-            {loading ? 'Guardando...' : 'Aceptar'}
+            {loading ? t('common.saving', 'Guardando...') : t('common.accept', 'Aceptar')}
           </button>
           <button className="secondary" onClick={handleClear} disabled={loading}>
-            Limpiar campos
+            {t('common.clearFields', 'Limpiar campos')}
           </button>
         </div>
       </div>

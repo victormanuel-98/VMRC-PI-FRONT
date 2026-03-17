@@ -1,25 +1,27 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useUiPreferences } from '../context/UiPreferencesContext';
 
 const Forbidden = () => {
     const navigate = useNavigate();
+    const { t } = useUiPreferences();
 
     return (
         <div className="forbidden-page">
             <div className="forbidden-container">
-                <p className="forbidden-subtitle">Acceso denegado</p>
+                <p className="forbidden-subtitle">{t('forbidden.subtitle', 'Acceso denegado')}</p>
                 <div className="forbidden-code">403</div>
-                <h1 className="forbidden-title">No tienes permisos</h1>
+                <h1 className="forbidden-title">{t('forbidden.title', 'No tienes permisos')}</h1>
                 <p className="forbidden-description">
-                    No tienes autorización para acceder a esta página
+                    {t('forbidden.description', 'No tienes autorización para acceder a esta página')}
                 </p>
                 
                 <div className="forbidden-buttons">
                     <button className="go-back-button" onClick={() => navigate(-1)}>
-                        Volver atrás
+                        {t('forbidden.back', 'Volver atrás')}
                     </button>
                     <button className="go-home-button" onClick={() => navigate('/inicio')}>
-                        Ir al inicio
+                        {t('forbidden.home', 'Ir al inicio')}
                     </button>
                 </div>
             </div>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useUiPreferences } from '../context/UiPreferencesContext';
 import Breadcrumbs from '../components/Breadcrumbs';
 import {
     obtenerReceta,
@@ -10,6 +11,7 @@ import {
 } from '../services/api';
 
 const RecipeDetail = () => {
+    const { t } = useUiPreferences();
     const { id } = useParams();
     const navigate = useNavigate();
     const [receta, setReceta] = useState(null);
@@ -20,9 +22,9 @@ const RecipeDetail = () => {
     const [comment, setComment] = useState('');
 
     const breadcrumbItems = [
-        { label: 'Inicio', path: '/inicio' },
-        { label: 'Mis Recetas', path: '/recetas' },
-        { label: 'Detalle de Receta', path: `/receta/${id}` }
+        { label: t('nav.home', 'Inicio'), path: '/inicio' },
+        { label: t('nav.myRecipes', 'Mis Recetas'), path: '/recetas' },
+        { label: t('recipeDetail.breadcrumb', 'Detalle de Receta'), path: `/receta/${id}` }
     ];
 
     const cargarReceta = async () => {
@@ -34,10 +36,10 @@ const RecipeDetail = () => {
                 setReceta(respuesta.receta);
                 setError('');
             } else {
-                setError('Receta no encontrada');
+                setError(t('recipeDetail.notFound', 'Receta no encontrada'));
             }
         } catch {
-            setError('Error al cargar la receta');
+            setError(t('recipeDetail.loadError', 'Error al cargar la receta'));
         } finally {
             setLoading(false);
         }
@@ -65,7 +67,7 @@ const RecipeDetail = () => {
     const handleToggleFavorite = async () => {
         const token = localStorage.getItem('token');
         if (!token) {
-            alert('Debes iniciar sesión');
+            alert(t('createRecipe.errorLogin', 'Debes iniciar sesión'));
             return;
         }
 
@@ -78,30 +80,30 @@ const RecipeDetail = () => {
                 setIsFavorite(true);
             }
         } catch {
-            alert('Error al actualizar favorito');
+            alert(t('recipeDetail.favoriteError', 'Error al actualizar favorito'));
         }
     };
 
     const handleSubmitRating = async () => {
         const token = localStorage.getItem('token');
         if (!token) {
-            alert('Debes iniciar sesión');
+            alert(t('createRecipe.errorLogin', 'Debes iniciar sesión'));
             return;
         }
 
         if (rating === 0) {
-            alert('Selecciona una puntuación');
+            alert(t('recipeDetail.selectRating', 'Selecciona una puntuación'));
             return;
         }
 
         try {
             await crearValoracion({ recetaId: id, puntuacion: rating, comentario: comment }, token);
-            alert('Valoración enviada');
+            alert(t('recipeDetail.ratingSent', 'Valoración enviada'));
             setRating(0);
             setComment('');
             await cargarReceta();
         } catch {
-            alert('Error al enviar valoración');
+            alert(t('recipeDetail.ratingError', 'Error al enviar valoración'));
         }
     };
 
@@ -111,7 +113,7 @@ const RecipeDetail = () => {
                 <Breadcrumbs items={breadcrumbItems} />
                 <div className="loading-state">
                     <div className="spinner"></div>
-                    <p>Cargando receta...</p>
+                    <p>{t('recipeDetail.loading', 'Cargando receta...')}</p>
                 </div>
             </div>
         );
@@ -122,9 +124,9 @@ const RecipeDetail = () => {
             <div className="recipe-detail-page">
                 <Breadcrumbs items={breadcrumbItems} />
                 <div className="error-state">
-                    <h2>{error || 'Receta no encontrada'}</h2>
+                    <h2>{error || t('recipeDetail.notFound', 'Receta no encontrada')}</h2>
                     <button onClick={() => navigate('/recetas')} className="back-button">
-                        Volver a recetas
+                        {t('recipeDetail.backToRecipes', 'Volver a recetas')}
                     </button>
                 </div>
             </div>
@@ -147,7 +149,7 @@ const RecipeDetail = () => {
                             className={`favorite-btn ${isFavorite ? 'active' : ''}`}
                             onClick={handleToggleFavorite}
                         >
-                            {isFavorite ? 'En favoritos' : 'Agregar a favoritos'}
+                            {isFavorite ? t('recipeDetail.inFavorites', 'En favoritos') : t('recipeDetail.addFavorite', 'Agregar a favoritos')}
                         </button>
                     </div>
 
@@ -156,39 +158,39 @@ const RecipeDetail = () => {
                         
                         <div className="recipe-meta">
                             <span className="meta-item">
-                                {receta.autor?.nombre || 'Anónimo'}
+                                {receta.autor?.nombre || t('recipeDetail.anonymous', 'Anónimo')}
                             </span>
                             <span className="meta-item">
                                 ⏱️ {receta.tiempoPreparacion} min
                             </span>
                             <span className="meta-item difficulty">
-                                {receta.dificultad || 'Media'}
+                                {receta.dificultad || t('breakfast.medium', 'Media')}
                             </span>
                             <span className="meta-item">
-                                {receta.categoria || 'General'}
+                                {receta.categoria || t('recipeDetail.general', 'General')}
                             </span>
                         </div>
 
                         <p className="recipe-description">{receta.descripcionCorta}</p>
 
                         <div className="nutrition-facts">
-                            <h3>Información Nutricional</h3>
+                            <h3>{t('recipeDetail.nutrition', 'Información Nutricional')}</h3>
                             <div className="nutrition-grid">
                                 <div className="nutrition-item">
                                     <span className="nutrition-value">{receta.calorias?.toFixed(0) || 0}</span>
-                                    <span className="nutrition-label">Calorías</span>
+                                    <span className="nutrition-label">{t('home.recent.calories', 'Calorías')}</span>
                                 </div>
                                 <div className="nutrition-item">
                                     <span className="nutrition-value">{receta.proteinas?.toFixed(1) || 0}g</span>
-                                    <span className="nutrition-label">Proteínas</span>
+                                    <span className="nutrition-label">{t('recipeDetail.proteins', 'Proteínas')}</span>
                                 </div>
                                 <div className="nutrition-item">
                                     <span className="nutrition-value">{receta.carbohidratos?.toFixed(1) || 0}g</span>
-                                    <span className="nutrition-label">Carbohidratos</span>
+                                    <span className="nutrition-label">{t('recipeDetail.carbs', 'Carbohidratos')}</span>
                                 </div>
                                 <div className="nutrition-item">
                                     <span className="nutrition-value">{receta.grasas?.toFixed(1) || 0}g</span>
-                                    <span className="nutrition-label">Grasas</span>
+                                    <span className="nutrition-label">{t('recipeDetail.fats', 'Grasas')}</span>
                                 </div>
                             </div>
                         </div>
@@ -197,36 +199,36 @@ const RecipeDetail = () => {
 
                 <div className="recipe-content">
                     <section className="ingredients-section">
-                        <h2>Ingredientes</h2>
+                        <h2>{t('createRecipe.ingredientsTitle', 'INGREDIENTES')}</h2>
                         <ul className="ingredients-list">
                             {receta.ingredientes && receta.ingredientes.length > 0 ? (
                                 receta.ingredientes.map((item, index) => (
                                     <li key={`${item?.ingrediente?._id || 'ingrediente'}-${index}`}>
                                         <span className="ingredient-amount">{item.cantidad}g</span>
                                         <span className="ingredient-name">
-                                            {item.ingrediente?.nombre || 'Ingrediente'}
+                                            {item.ingrediente?.nombre || t('recipeDetail.ingredient', 'Ingrediente')}
                                         </span>
                                     </li>
                                 ))
                             ) : (
-                                <li>No hay ingredientes disponibles</li>
+                                <li>{t('recipeDetail.noIngredients', 'No hay ingredientes disponibles')}</li>
                             )}
                         </ul>
                     </section>
 
                     <section className="instructions-section">
-                        <h2>Preparación</h2>
+                        <h2>{t('recipeDetail.preparation', 'Preparación')}</h2>
                         <div className="instructions-content">
                             {receta.descripcionLarga ? (
                                 <p className="instructions-text">{receta.descripcionLarga}</p>
                             ) : (
-                                <p className="instructions-text">No hay instrucciones disponibles</p>
+                                <p className="instructions-text">{t('recipeDetail.noInstructions', 'No hay instrucciones disponibles')}</p>
                             )}
                         </div>
                     </section>
 
                     <section className="rating-section">
-                        <h2>Valorar esta receta</h2>
+                        <h2>{t('recipeDetail.rateTitle', 'Valorar esta receta')}</h2>
                         <div className="rating-form">
                             <div className="stars-input">
                                 {[1, 2, 3, 4, 5].map((star) => (
@@ -241,7 +243,7 @@ const RecipeDetail = () => {
                                 ))}
                             </div>
                             <textarea
-                                placeholder="Escribe un comentario (opcional)"
+                                placeholder={t('recipeDetail.commentPlaceholder', 'Escribe un comentario (opcional)')}
                                 value={comment}
                                 onChange={(e) => setComment(e.target.value)}
                                 rows={4}
@@ -251,7 +253,7 @@ const RecipeDetail = () => {
                                 onClick={handleSubmitRating}
                                 className="submit-rating-btn"
                             >
-                                Enviar valoración
+                                {t('recipeDetail.sendRating', 'Enviar valoración')}
                             </button>
                         </div>
                     </section>

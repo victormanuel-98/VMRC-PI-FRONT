@@ -8,14 +8,17 @@ const Settings = () => {
   const { user } = useAuth();
   const { preferences, setLanguage, setTheme, t } = useUiPreferences();
   const breadcrumbItems = [
-    { label: 'Inicio', path: '/inicio' },
-    { label: 'Ajustes', path: '/ajustes' }
+    { label: t('nav.home', 'Inicio'), path: '/inicio' },
+    { label: t('nav.settings', 'Ajustes'), path: '/ajustes' }
   ];
   const [settings, setSettings] = useState({
     idioma: 'espanol',
     comentarios: 'publico',
     iluminacion: 'claro',
     conectarDispositivo: 'no',
+    unidades: 'metrico',
+    resumenSemanal: 'si',
+    objetivoNutricional: 'equilibrado',
   });
 
   const [saved, setSaved] = useState(false);
@@ -104,7 +107,7 @@ const Settings = () => {
       <div className="settings-page">
         <Breadcrumbs items={breadcrumbItems} />
         <div className="settings-container">
-          <p>Cargando ajustes...</p>
+          <p>{t('settings.loading', 'Cargando ajustes...')}</p>
         </div>
       </div>
     );
@@ -119,113 +122,153 @@ const Settings = () => {
           <p className="settings-subtitle">{t('settings.subtitle', 'Controla idioma, apariencia y preferencias de interacción.')}</p>
         </div>
 
-        <div className="settings-card">
-          <div className="setting-row">
-            <label className="setting-label">{t('settings.language', 'Idioma')}:</label>
-            <div className="setting-options">
-              <label className="option-checkbox">
-                <span>{t('settings.spanish', 'Español')}</span>
-                <input
-                  type="radio"
-                  name="idioma"
-                  value="espanol"
-                  checked={settings.idioma === 'espanol'}
-                  onChange={() => handleChange('idioma', 'espanol')}
-                />
-              </label>
-              <label className="option-checkbox">
-                <span>{t('settings.english', 'Inglés')}</span>
-                <input
-                  type="radio"
-                  name="idioma"
-                  value="ingles"
-                  checked={settings.idioma === 'ingles'}
-                  onChange={() => handleChange('idioma', 'ingles')}
-                />
-              </label>
-            </div>
-          </div>
+        <div className="settings-card modern-settings-card">
+          <section className="settings-group">
+            <h2>{t('settings.accountPrivacy', 'Cuenta y privacidad')}</h2>
 
-          <div className="setting-row">
-            <label className="setting-label">{t('settings.comments', 'Comentarios')}:</label>
-            <div className="setting-options">
-              <label className="option-checkbox">
-                <span>{t('settings.public', 'Público')}</span>
-                <input
-                  type="radio"
-                  name="comentarios"
-                  value="publico"
-                  checked={settings.comentarios === 'publico'}
-                  onChange={() => handleChange('comentarios', 'publico')}
-                />
-              </label>
-              <label className="option-checkbox">
-                <span>{t('settings.private', 'Privado')}</span>
-                <input
-                  type="radio"
-                  name="comentarios"
-                  value="privado"
-                  checked={settings.comentarios === 'privado'}
-                  onChange={() => handleChange('comentarios', 'privado')}
-                />
-              </label>
-            </div>
-          </div>
-
-          <div className="setting-row">
-            <label className="setting-label">{t('settings.appearance', 'Iluminación')}:</label>
-            <div className="setting-options">
-              <label className="option-checkbox">
-                <span>{t('settings.light', 'Modo claro')}</span>
-                <input
-                  type="radio"
-                  name="iluminacion"
-                  value="claro"
-                  checked={settings.iluminacion === 'claro'}
-                  onChange={() => handleChange('iluminacion', 'claro')}
-                />
-              </label>
-              <label className="option-checkbox">
-                <span>{t('settings.dark', 'Modo oscuro')}</span>
-                <input
-                  type="radio"
-                  name="iluminacion"
-                  value="oscuro"
-                  checked={settings.iluminacion === 'oscuro'}
-                  onChange={() => handleChange('iluminacion', 'oscuro')}
-                />
-              </label>
-            </div>
-          </div>
-
-          <div className="setting-row device-row">
-            <label className="setting-label">{t('settings.devices', 'Dispositivos')}:</label>
-            <div className="device-question">
-              <span className="device-text">{t('settings.connectMobile', '¿Conectar con la cuenta de tu móvil?')}</span>
+            <div className="setting-row">
+              <span className="setting-label">{t('settings.language', 'Idioma')}:</span>
               <div className="setting-options">
-                <label className="option-checkbox">
-                  <span>{t('settings.yes', 'Sí')}</span>
-                  <input
-                    type="radio"
-                    name="conectarDispositivo"
-                    value="si"
-                    checked={settings.conectarDispositivo === 'si'}
-                    onChange={() => handleChange('conectarDispositivo', 'si')}
-                  />
-                </label>
-                <label className="option-checkbox">
-                  <span>{t('settings.no', 'No')}</span>
-                  <input
-                    type="radio"
-                    name="conectarDispositivo"
-                    value="no"
-                    checked={settings.conectarDispositivo === 'no'}
-                    onChange={() => handleChange('conectarDispositivo', 'no')}
-                  />
-                </label>
+                <button
+                  type="button"
+                  className={`setting-chip ${settings.idioma === 'espanol' ? 'active' : ''}`}
+                  onClick={() => handleChange('idioma', 'espanol')}
+                >
+                  {t('settings.spanish', 'Español')}
+                </button>
+                <button
+                  type="button"
+                  className={`setting-chip ${settings.idioma === 'ingles' ? 'active' : ''}`}
+                  onClick={() => handleChange('idioma', 'ingles')}
+                >
+                  {t('settings.english', 'Inglés')}
+                </button>
               </div>
             </div>
-          </div>
+
+            <div className="setting-row">
+              <span className="setting-label">{t('settings.comments', 'Comentarios')}:</span>
+              <div className="setting-options">
+                <button
+                  type="button"
+                  className={`setting-chip ${settings.comentarios === 'publico' ? 'active' : ''}`}
+                  onClick={() => handleChange('comentarios', 'publico')}
+                >
+                  {t('settings.public', 'Público')}
+                </button>
+                <button
+                  type="button"
+                  className={`setting-chip ${settings.comentarios === 'privado' ? 'active' : ''}`}
+                  onClick={() => handleChange('comentarios', 'privado')}
+                >
+                  {t('settings.private', 'Privado')}
+                </button>
+              </div>
+            </div>
+
+            <div className="setting-row device-row">
+              <span className="setting-label">{t('settings.devices', 'Dispositivos')}:</span>
+              <div className="device-question">
+                <span className="device-text">{t('settings.connectMobile', '¿Conectar con la cuenta de tu móvil?')}</span>
+                <div className="setting-options">
+                  <button
+                    type="button"
+                    className={`setting-chip ${settings.conectarDispositivo === 'si' ? 'active' : ''}`}
+                    onClick={() => handleChange('conectarDispositivo', 'si')}
+                  >
+                    {t('settings.yes', 'Sí')}
+                  </button>
+                  <button
+                    type="button"
+                    className={`setting-chip ${settings.conectarDispositivo === 'no' ? 'active' : ''}`}
+                    onClick={() => handleChange('conectarDispositivo', 'no')}
+                  >
+                    {t('settings.no', 'No')}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="settings-group">
+            <h2>{t('settings.usageExperience', 'Experiencia de uso')}</h2>
+
+            <div className="setting-row">
+              <span className="setting-label">{t('settings.appearance', 'Iluminación')}:</span>
+              <div className="setting-options">
+                <button
+                  type="button"
+                  className={`setting-chip ${settings.iluminacion === 'claro' ? 'active' : ''}`}
+                  onClick={() => handleChange('iluminacion', 'claro')}
+                >
+                  {t('settings.light', 'Modo claro')}
+                </button>
+                <button
+                  type="button"
+                  className={`setting-chip ${settings.iluminacion === 'oscuro' ? 'active' : ''}`}
+                  onClick={() => handleChange('iluminacion', 'oscuro')}
+                >
+                  {t('settings.dark', 'Modo oscuro')}
+                </button>
+              </div>
+            </div>
+
+            <div className="setting-row">
+              <span className="setting-label">{t('settings.units', 'Unidades')}:</span>
+              <div className="setting-options">
+                <button
+                  type="button"
+                  className={`setting-chip ${settings.unidades === 'metrico' ? 'active' : ''}`}
+                  onClick={() => handleChange('unidades', 'metrico')}
+                >
+                  {t('settings.metric', 'Métrico')}
+                </button>
+                <button
+                  type="button"
+                  className={`setting-chip ${settings.unidades === 'imperial' ? 'active' : ''}`}
+                  onClick={() => handleChange('unidades', 'imperial')}
+                >
+                  {t('settings.imperial', 'Imperial')}
+                </button>
+              </div>
+            </div>
+
+            <div className="setting-row">
+              <span className="setting-label">{t('settings.weeklySummary', 'Resumen semanal')}:</span>
+              <div className="setting-options">
+                <button
+                  type="button"
+                  className={`setting-chip ${settings.resumenSemanal === 'si' ? 'active' : ''}`}
+                  onClick={() => handleChange('resumenSemanal', 'si')}
+                >
+                  {t('settings.enabled', 'Activado')}
+                </button>
+                <button
+                  type="button"
+                  className={`setting-chip ${settings.resumenSemanal === 'no' ? 'active' : ''}`}
+                  onClick={() => handleChange('resumenSemanal', 'no')}
+                >
+                  {t('settings.disabled', 'Desactivado')}
+                </button>
+              </div>
+            </div>
+
+            <div className="setting-row">
+              <span className="setting-label">{t('settings.nutritionGoal', 'Objetivo nutricional')}:</span>
+              <div className="setting-select-wrap">
+                <select
+                  className="setting-select"
+                  value={settings.objetivoNutricional}
+                  onChange={(e) => handleChange('objetivoNutricional', e.target.value)}
+                >
+                  <option value="equilibrado">{t('settings.goalBalanced', 'Equilibrado')}</option>
+                  <option value="energia">{t('settings.goalEnergy', 'Más energía')}</option>
+                  <option value="definicion">{t('settings.goalDefinition', 'Definición')}</option>
+                  <option value="ganancia">{t('settings.goalGain', 'Ganancia muscular')}</option>
+                </select>
+              </div>
+            </div>
+          </section>
         </div>
 
         <button className="save-button" onClick={handleSave}>
