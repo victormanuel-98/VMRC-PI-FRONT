@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { useUiPreferences } from '../context/UiPreferencesContext';
 import { registro } from '../services/api';
 
+const DEFAULT_AVATAR = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22180%22 height=%22180%22 viewBox=%220 0 180 180%22%3E%3Crect width=%22180%22 height=%22180%22 rx=%2212%22 fill=%22%23dfe8ed%22/%3E%3Ccircle cx=%2290%22 cy=%2268%22 r=%2232%22 fill=%22%2384a3b1%22/%3E%3Cpath d=%22M36 156c10-30 30-48 54-48s44 18 54 48%22 fill=%22none%22 stroke=%22%2384a3b1%22 stroke-width=%2218%22 stroke-linecap=%22round%22/%3E%3C/svg%3E';
+
 const Register = () => {
   const navigate = useNavigate();
-  const [previewImage, setPreviewImage] = useState('/default-avatar.png');
+  const [previewImage, setPreviewImage] = useState(DEFAULT_AVATAR);
   const [imagenUrl, setImagenUrl] = useState(null);
   const [formData, setFormData] = useState({
     nombre: '',
@@ -27,9 +29,10 @@ const Register = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+    const nextValue = type === 'checkbox' ? checked : value;
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : (type === 'radio' ? value : value)
+      [name]: nextValue
     }));
     if (errors[name]) {
       setErrors(prev => ({
@@ -54,6 +57,10 @@ const Register = () => {
       };
       readerBase64.readAsDataURL(file);
     }
+  };
+
+  const handlePreviewError = (e) => {
+    e.currentTarget.src = DEFAULT_AVATAR;
   };
 
   const validateForm = () => {
@@ -140,7 +147,7 @@ const Register = () => {
             <div className="register-left register-left-modern">
               <h3 className="register-section-title">{t('register.photo', 'Foto de perfil')}</h3>
               <div className="register-avatar">
-                <img src={previewImage} alt="Avatar" />
+                <img src={previewImage || DEFAULT_AVATAR} alt="Avatar" onError={handlePreviewError} />
               </div>
               <input
                 type="file"
@@ -156,8 +163,6 @@ const Register = () => {
               >
                 {t('register.uploadImage', 'Subir imagen')}
               </button>
-
-              <img src="/images/Registrar nuevo usuario.png" alt={t('register.title', 'Crear cuenta')} className="register-side-image" />
             </div>
 
             <div className="register-right">
@@ -279,7 +284,15 @@ const Register = () => {
           </div>
 
           <div className="register-button-container">
-            <button type="submit" className="create-account-btn" disabled={loading}>
+            <button
+              type="button"
+              className="back-login-btn"
+              onClick={() => navigate('/login')}
+              disabled={loading}
+            >
+              {t('register.backToLogin', 'Volver al login')}
+            </button>
+            <button type="submit" className="create-account-btn register-submit-btn" disabled={loading}>
               {loading ? t('register.submitLoading', 'Creando cuenta...') : t('register.submit', 'Crear usuario')}
             </button>
           </div>

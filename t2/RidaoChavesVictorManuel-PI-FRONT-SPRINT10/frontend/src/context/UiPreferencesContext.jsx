@@ -107,6 +107,7 @@ const translations = {
     'register.placeholderPhone': 'Your phone number',
     'register.submitLoading': 'Creating account...',
     'register.submit': 'Create user',
+    'register.backToLogin': 'Back to login',
     'register.success': 'Account created successfully! Redirecting to login...',
     'register.errorCreate': 'Error creating account',
     'register.errorConnection': 'Connection error. Verify the server is running.',
@@ -352,7 +353,10 @@ const translations = {
     'forbidden.home': 'Go to home',
     'notFound.subtitle': 'Oops... it looks like there was a problem',
     'notFound.title': 'Page not found',
-    'notFound.backHome': 'Back to home'
+    'notFound.description': 'The page you are trying to open is unavailable or has been moved.',
+    'notFound.back': 'Go back',
+    'notFound.backHome': 'Back to home',
+    'notFound.report': 'Report that this page is not working'
   }
 };
 
