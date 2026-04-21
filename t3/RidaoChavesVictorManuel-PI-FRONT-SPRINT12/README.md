@@ -1,5 +1,7 @@
 ﻿# FitFood - Tu Web de Recetas Saludables
 
+- Información sobre pruebas unitarias y E2E a partir de línea 514
+
 ---
 
 ## Descripción del Proyecto
